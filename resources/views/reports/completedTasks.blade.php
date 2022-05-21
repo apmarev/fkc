@@ -9,7 +9,6 @@
             <tr>
                 <th scope="col">Источник</th>
                 <th scope="col">Кол-во</th>
-                <th scope="col">Сумма</th>
             </tr>
             </thead>
             <tbody>
@@ -17,7 +16,6 @@
                 <tr>
                     <td>{{ $item['name'] }}</td>
                     <td>{{ $item['count'] }}</td>
-                    <td>{{ $item['price'] }}</td>
                 </tr>
             @endforeach
             </tbody>
