@@ -169,10 +169,8 @@ class ReportController extends Controller {
     /**
      * Виджет «Источники сделок»
      */
-    public function transactionSources($date = '') {
+    public function transactionSources($date) {
         $pipeline = 3965530; // Клиенты в активной работе
-        if($date == '')
-            $date = ['from' => 1651412124, 'to' => time()];
 
         $filter = "&filter[pipeline_id]={$pipeline}&filter[created_at][from]={$date['from']}&filter[created_at][to]={$date['to']}";
         $leads = $this->amo->getAllListByFilter('leads', $filter);
@@ -208,11 +206,8 @@ class ReportController extends Controller {
     /**
      * Виджет «Выполненные задачи»
      */
-    public function completedTasks($date = '') {
+    public function completedTasks($date) {
         $pipeline = 3965530; // Клиенты в активной работе
-
-        if($date == '')
-            $date = ['from' => 1651412124, 'to' => time()];
 
         $array = [];
         $managers = $this->amo->getUsersByGroup(395710);
@@ -252,11 +247,8 @@ class ReportController extends Controller {
     /**
      * Виджет «Созданные задачи»
      */
-    public function createdTasks($date = '') {
+    public function createdTasks($date) {
         $pipeline = 3965530; // Клиенты в активной работе
-
-        if($date == '')
-            $date = ['from' => 1651412124, 'to' => time()];
 
         $array = [];
         $managers = $this->amo->getUsersByGroup(395710);
@@ -296,11 +288,8 @@ class ReportController extends Controller {
     /**
      * Виджет «Закрыто задач по менеджерам»
      */
-    public function closedTasksByManagers($date = '') {
+    public function closedTasksByManagers($date) {
         $pipeline = 3966382; // Клиенты без активных сделок
-
-        if($date == '')
-            $date = ['from' => 1651412124, 'to' => time()];
 
         $array = [];
         $managers = $this->amo->getUsersByGroup();
@@ -340,12 +329,9 @@ class ReportController extends Controller {
     /**
      * Виджет «Создано примечаний по менеджерам»
      */
-    public function createdNotesForManagers($date = '') {
+    public function createdNotesForManagers($date) {
         $pipeline = 3965530; // Клиенты в активной работе
         $pipelineTwo = 3966385; // Клиенты на юридическое сопровождение
-
-        if($date == '')
-            $date = ['from' => 1651412124, 'to' => time()];
 
         $array = [];
         $managers = $this->amo->getUsersByGroup();
