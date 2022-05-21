@@ -297,7 +297,7 @@ class ReportController extends Controller {
      * Виджет «Закрыто задач по менеджерам»
      */
     public function closedTasksByManagers($date = '') {
-        $pipeline = 3966382; // Клиенты в активной работе
+        $pipeline = 3966382; // Клиенты без активных сделок
 
         if($date == '')
             $date = ['from' => 1651412124, 'to' => time()];
@@ -341,7 +341,48 @@ class ReportController extends Controller {
      * Виджет «Создано примечаний по менеджерам»
      */
     public function createdNotesForManagers($date = '') {
+        $pipeline = 3965530; // Клиенты в активной работе
+        $pipelineTwo = 3966385; // Клиенты на юридическое сопровождение
 
+        if($date == '')
+            $date = ['from' => 1651412124, 'to' => time()];
+
+        $array = [];
+        $managers = $this->amo->getUsersByGroup();
+        foreach($managers as $manager) {
+            $array[$manager['id']] = [
+                'id' => $manager['id'],
+                'name' => $manager['name'],
+                'count' => 0,
+                'price' => 0
+            ];
+        }
+
+        $leadsByPipelineOne = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
+        $leadsByPipelineTwo = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipelineTwo}");
+
+        $leadsByPipeline = array_merge($leadsByPipelineOne, $leadsByPipelineTwo);
+
+        $filter = "&filter[entity_type]=leads&filter[note_type]=common&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
+        $leads = $this->amo->getNotesByFilter($filter);
+
+        foreach($array as $k => $v) {
+            foreach($leads as $lead) {
+                $key = array_search($lead['entity_id'], array_column($leadsByPipeline, 'id'));
+
+                if(!$key && $lead['responsible_user_id'] == $k) {
+                    $count = 0;
+
+                    if( isset($array[$k]) ) {
+                        $count = $array[$k]['count'] + 1;
+                    }
+
+                    $array[$k]['count'] = $count;
+                }
+            }
+        }
+
+        return $array;
     }
 
 }

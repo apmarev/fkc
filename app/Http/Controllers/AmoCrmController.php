@@ -81,6 +81,23 @@ class AmoCrmController extends Controller {
         return $result;
     }
 
+    public function getNotesByFilter(string $filter) {
+        $result = [];
+
+        for($i=1;;$i++) {
+            $query = "/leads/notes?page={$i}&limit=250{$filter}";
+            $res = $this->amoGet($query);
+            $list = self::getIsSetList($res, 'notes');
+            if(sizeof($list) > 0) {
+                $result = array_merge($result, $list);
+                unset($list);
+            } else
+                break;
+        }
+
+        return $result;
+    }
+
     public function getLeadByID($leadID) {
         $path = "/leads/{$leadID}?with=contacts,companies";
         return $this->amoGet($path);
