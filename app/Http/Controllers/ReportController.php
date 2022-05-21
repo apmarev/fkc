@@ -226,7 +226,23 @@ class ReportController extends Controller {
         $filter = "&filter[is_completed]=1&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
         $leads = $this->amo->getAllListByFilter('tasks', $filter);
 
-        return $leads;
+
+        foreach($array as $k => $v) {
+            foreach($leads as $lead) {
+                if($lead['responsible_user_id'] == $k) {
+
+                    $count = 0;
+
+                    if( isset($array[$k]) ) {
+                        $count = $array[$k]['count'] + 1;
+                    }
+
+                    $array[$k]['count'] = $count;
+                }
+            }
+        }
+
+        return $array;
     }
 
     /**

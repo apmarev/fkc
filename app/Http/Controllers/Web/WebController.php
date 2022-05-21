@@ -91,7 +91,7 @@ class WebController extends Controller {
      * Виджет «Выполненные задачи»
      */
     public function completedTasks($date) {
-
+        return view('reports.completedTasks', [ 'items' => $this->reports->completedTasks($date) ]);
     }
 
     /**
