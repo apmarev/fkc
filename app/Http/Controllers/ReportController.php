@@ -208,8 +208,25 @@ class ReportController extends Controller {
     /**
      * Виджет «Выполненные задачи»
      */
-    public function completedTasks() {
+    public function completedTasks($date = '') {
+        if($date == '')
+            $date = ['from' => 1651412124, 'to' => time()];
 
+        $array = [];
+        $managers = $this->amo->getUsersByGroup(395710);
+        foreach($managers as $manager) {
+            $array[$manager['id']] = [
+                'id' => $manager['id'],
+                'name' => $manager['name'],
+                'count' => 0,
+                'price' => 0
+            ];
+        }
+
+        $filter = "&filter[is_completed]=1&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
+        $leads = $this->amo->getAllListByFilter('tasks', $filter);
+
+        return $leads;
     }
 
     /**

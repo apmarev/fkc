@@ -11,3 +11,4 @@ Route::get('/reports/salesAnalysis', [ReportController::class, 'salesAnalysis'])
 Route::get('/reports/dealsByManager', [ReportController::class, 'dealsByManager']);
 Route::get('/reports/salesByManager', [ReportController::class, 'salesByManager']);
 Route::get('/reports/transactionSources', [ReportController::class, 'transactionSources']);
+Route::get('/reports/completedTasks', [ReportController::class, 'completedTasks']);

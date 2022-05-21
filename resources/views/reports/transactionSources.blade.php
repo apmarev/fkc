@@ -13,11 +13,11 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($items as $item)
+            @foreach($items as $k => $v)
                 <tr>
-                    <td>{{ $item['name'] }}</td>
-                    <td>{{ $item['count'] }}</td>
-                    <td>{{ $item['price'] }}</td>
+                    <td>{{ $k }}</td>
+                    <td>{{ $v['count'] }}</td>
+                    <td>{{ $v['price'] }}</td>
                 </tr>
             @endforeach
             </tbody>
