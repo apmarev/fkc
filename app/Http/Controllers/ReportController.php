@@ -223,7 +223,7 @@ class ReportController extends Controller {
             ];
         }
 
-        $filter = "&filter[is_completed]=1&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
+        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
         $leads = $this->amo->getAllListByFilter('tasks', $filter);
 
 
