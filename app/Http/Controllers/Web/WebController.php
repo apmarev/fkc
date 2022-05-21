@@ -30,7 +30,6 @@ class WebController extends Controller {
                     $date = [
                         'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00.00.01"),
                         'to' => time(),
-                        'test' => date("d.m.Y", strtotime('monday this week')),
                     ];
                 } else if($period == 'day') {
                     $date = [
@@ -43,7 +42,11 @@ class WebController extends Controller {
                         'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
                     ];
                 } else if($period == 'month') {
-
+                    $date = [
+                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00.00.01"),
+                        'to' => time(),
+                        'test' => date("d.m.Y", strtotime('first day of this month'))
+                    ];
                 }
             }
 
