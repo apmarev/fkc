@@ -49,69 +49,69 @@ class WebController extends Controller {
                     ];
                 }
             }
-
-            Telegram::sendMessage([
-                'chat_id' => 228519769,
-                'text' => json_encode($date)
-            ]);
+//
+//            Telegram::sendMessage([
+//                'chat_id' => 228519769,
+//                'text' => json_encode($date)
+//            ]);
 
         }
-        return $this->$type($period, $custom);
+        return $this->$type($date);
     }
 
     /**
      * Виджет «Анализ продаж»
      */
-    public function salesAnalysis($period = '', $custom = '') {
+    public function salesAnalysis($date) {
         return view('reports.salesAnalysis', [ 'items' => $this->reports->salesAnalysis() ]);
     }
 
     /**
      * Виджет «Сделки по менеджерам»
      */
-    public function dealsByManager($period = '', $custom = '') {
+    public function dealsByManager($date) {
         return view('reports.dealsByManager', [ 'items' => $this->reports->dealsByManager() ]);
     }
 
     /**
      * Виджет «Продажи по менеджерам»
      */
-    public function salesByManager($period, $custom = '') {
-
+    public function salesByManager($date) {
+        return view('reports.salesByManager', [ 'items' => $this->reports->salesByManager($date) ]);
     }
 
     /**
      * Виджет «Источники сделок»
      */
-    public function transactionSources() {
+    public function transactionSources($date) {
 
     }
 
     /**
      * Виджет «Выполненные задачи»
      */
-    public function completedTasks() {
+    public function completedTasks($date) {
 
     }
 
     /**
      * Виджет «Созданные задачи»
      */
-    public function createdTasks() {
+    public function createdTasks($date) {
 
     }
 
     /**
      * Виджет «Закрыто задач по менеджерам»
      */
-    public function closedTasksByManagers() {
+    public function closedTasksByManagers($date) {
 
     }
 
     /**
      * Виджет «Создано примечаний по менеджерам»
      */
-    public function createdNotesForManagers() {
+    public function createdNotesForManagers($date) {
 
     }
 }

@@ -118,7 +118,7 @@ class ReportController extends Controller {
     /**
      * Виджет «Продажи по менеджерам»
      */
-    public function salesByManager() {
+    public function salesByManager($date) {
         $pipeline = 3965530; // Клиенты в активной работе
 
         $array = [];
@@ -132,7 +132,7 @@ class ReportController extends Controller {
             ];
         }
 
-        $filter = "&filter[statuses][0][pipeline_id]={$pipeline}&filter[statuses][0][status_id]=142";
+        $filter = "&filter[statuses][0][pipeline_id]={$pipeline}&filter[statuses][0][status_id]=142&filter[closed_at][from]={$date['from']}&filter[closed_at][to]={$date['to']}";
         $leads = $this->amo->getAllListByFilter('leads', $filter);
 
         foreach($array as $k => $v) {
