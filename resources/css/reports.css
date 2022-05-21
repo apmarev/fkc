@@ -73,3 +73,7 @@ a, a:active, a:hover, a:visited {
     width: 20px;
 
 }
+
+table {
+    color: white !important;
+}
