@@ -169,8 +169,40 @@ class ReportController extends Controller {
     /**
      * Виджет «Источники сделок»
      */
-    public function transactionSources() {
+    public function transactionSources($date = '') {
+        $pipeline = 3965530; // Клиенты в активной работе
+        if($date == '')
+            $date = ['from' => 1651412124, 'to' => time()];
 
+        $filter = "&filter[pipeline_id]={$pipeline}&filter[created_at][from]={$date['from']}&filter[created_at][to]={$date['to']}";
+        $leads = $this->amo->getAllListByFilter('leads', $filter);
+
+        $array = [];
+
+        foreach($leads as $lead) {
+            $custom = $this->amo->getIsSetListCustomFields($lead);
+            $resource = "Источник не указан";
+            $price = 0;
+            foreach($custom as $c) {
+                if($c['field_id'] == 915455) $price = $c['values'][0]['value'];
+                if($c['field_id'] == 221387) $resource = $c['values'][0]['value'];
+            }
+
+            if(isset($array[$resource])) {
+                $array[$resource] = [
+                    'price' => $array[$resource]['price'] + $price,
+                    'count' => $array[$resource]['count'] + 1
+                ];
+            } else {
+                $array[$resource] = [
+                    'price' => $price,
+                    'count' => 1
+                ];
+            }
+
+        }
+
+        return $array;
     }
 
     /**

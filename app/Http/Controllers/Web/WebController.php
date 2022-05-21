@@ -84,7 +84,7 @@ class WebController extends Controller {
      * Виджет «Источники сделок»
      */
     public function transactionSources($date) {
-
+        return view('reports.transactionSources', [ 'items' => $this->reports->transactionSources($date) ]);
     }
 
     /**
