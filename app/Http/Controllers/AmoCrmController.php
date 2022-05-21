@@ -244,9 +244,8 @@ class AmoCrmController extends Controller {
         }
     }
 
-    public function amoGetStatusAccess($type = 'wialon') {
+    public function amoGetStatusAccess() {
         $amoID = 1;
-        if($type == 'r') $amoID = 2;
 
         try {
             $access = $this->__access->getAccessByID($amoID);
