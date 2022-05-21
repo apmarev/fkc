@@ -10,6 +10,7 @@ html, body {
     margin: 0;
     font-family: 'PT Sans';
     color: #2E3640;
+    background: transparent;
 }
 a, a:active, a:hover, a:visited {
     color: #2E3640;
