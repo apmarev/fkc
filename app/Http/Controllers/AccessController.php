@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 class AccessController extends Controller {
 
     public function getAccessByID($elementID) {
-        return Access::findOrFail($elementID);
+        return Access::find($elementID);
     }
 
     public function getAccessByName($name) {

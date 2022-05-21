@@ -245,10 +245,8 @@ class AmoCrmController extends Controller {
     }
 
     public function amoGetStatusAccess() {
-        $amoID = 1;
-
         try {
-            $access = $this->__access->getAccessByID($amoID);
+            $access = $this->__access->getAccessByID(1);
             if(time() >= $access->expires) {
                 return $this->newAccessTokenByRefreshToken($access);
             } else {
