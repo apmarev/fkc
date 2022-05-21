@@ -297,7 +297,44 @@ class ReportController extends Controller {
      * Виджет «Закрыто задач по менеджерам»
      */
     public function closedTasksByManagers($date = '') {
+        $pipeline = 3966382; // Клиенты в активной работе
 
+        if($date == '')
+            $date = ['from' => 1651412124, 'to' => time()];
+
+        $array = [];
+        $managers = $this->amo->getUsersByGroup();
+        foreach($managers as $manager) {
+            $array[$manager['id']] = [
+                'id' => $manager['id'],
+                'name' => $manager['name'],
+                'count' => 0,
+                'price' => 0
+            ];
+        }
+
+        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
+
+        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
+        $leads = $this->amo->getAllListByFilter('tasks', $filter);
+
+
+        foreach($array as $k => $v) {
+            foreach($leads as $lead) {
+                if($lead['responsible_user_id'] == $k && array_search($lead['entity_id'], array_column($leadsByPipeline, 'id')) > -1) {
+
+                    $count = 0;
+
+                    if( isset($array[$k]) ) {
+                        $count = $array[$k]['count'] + 1;
+                    }
+
+                    $array[$k]['count'] = $count;
+                }
+            }
+        }
+
+        return $array;
     }
 
     /**
