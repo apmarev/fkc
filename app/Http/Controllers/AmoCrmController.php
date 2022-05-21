@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\CustomApiException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class AmoCrmController extends Controller {
 
@@ -214,15 +215,26 @@ class AmoCrmController extends Controller {
         try {
             $response = $this->amoPostNewAccessAndRefresh($request->input('key'), $request->input('client'), $request->input('secret'));
 
-            return $this->__access->create([
-                'name'          => 'amo',
-                'description'   => $request->input('description'),
-                'secret'        => $request->input('secret'),
-                'client'        => $request->input('client'),
-                'access'        => $response['access_token'],
-                'refresh'       => $response['refresh_token'],
-                'expires'       => time() + $response['expires_in'],
-            ]);
+            return Storage::put('amo.txt', json_encode(
+                [
+                    'name'          => 'amo',
+                    'description'   => $request->input('description'),
+                    'secret'        => $request->input('secret'),
+                    'client'        => $request->input('client'),
+                    'access'        => $response['access_token'],
+                    'refresh'       => $response['refresh_token'],
+                    'expires'       => time() + $response['expires_in'],
+                ]
+            ));
+//            return $this->__access->create([
+//                'name'          => 'amo',
+//                'description'   => $request->input('description'),
+//                'secret'        => $request->input('secret'),
+//                'client'        => $request->input('client'),
+//                'access'        => $response['access_token'],
+//                'refresh'       => $response['refresh_token'],
+//                'expires'       => time() + $response['expires_in'],
+//            ]);
         } catch (\Exception $e) {
             return CustomApiException::error(500, $e->getMessage());
         }
@@ -246,15 +258,11 @@ class AmoCrmController extends Controller {
 
     public function amoGetStatusAccess() {
         try {
-            $access = $this->__access->getAccessByID(1);
-            if(isset($access['access'])) {
-                if(time() >= $access->expires) {
-                    return $this->newAccessTokenByRefreshToken($access);
-                } else {
-                    return $access;
-                }
-            } else {
+            $access = json_decode(Storage::get('amo.txt'), true);
+            if(time() >= $access['expires']) {
                 return $this->newAccessTokenByRefreshToken($access);
+            } else {
+                return $access;
             }
         } catch (\Exception $e) {
             return CustomApiException::error(404);
@@ -273,11 +281,13 @@ class AmoCrmController extends Controller {
 
             if(isset($result['access_token'])) {
                 try {
-                    $access = $this->__access->getAccessByID($service['id']);
-                    $access->__set('access', $result['access_token']);
-                    $access->__set('refresh', $result['refresh_token']);
-                    $access->__set('expires', time() + $result['expires_in']);
-                    $access->save();
+                    $access = json_decode(Storage::get('amo.txt'), true);
+
+                    $access['access'] = $result['access_token'];
+                    $access['refresh'] = $result['refresh_token'];
+                    $access['expires'] = $result['expires_in'];
+
+                    Storage::put('amo.txt', json_encode($access));
 
                     return $access;
                 } catch (\Exception $e) {

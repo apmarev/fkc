@@ -371,4 +371,7 @@ class ReportController extends Controller {
         return $array;
     }
 
+    public function test() {
+        return $this->amo->getUsersByGroup();
+    }
 }

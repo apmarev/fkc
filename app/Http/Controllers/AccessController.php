@@ -6,6 +6,7 @@ use App\Exceptions\CustomApiException;
 use App\Models\Access;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class AccessController extends Controller {
 
