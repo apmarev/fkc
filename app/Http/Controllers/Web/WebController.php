@@ -98,20 +98,20 @@ class WebController extends Controller {
      * Виджет «Созданные задачи»
      */
     public function createdTasks($date) {
-
+        return view('reports.createdTasks', [ 'items' => $this->reports->createdTasks($date) ]);
     }
 
     /**
      * Виджет «Закрыто задач по менеджерам»
      */
     public function closedTasksByManagers($date) {
-
+        return view('reports.closedTasksByManagers', [ 'items' => $this->reports->closedTasksByManagers($date) ]);
     }
 
     /**
      * Виджет «Создано примечаний по менеджерам»
      */
     public function createdNotesForManagers($date) {
-
+        return view('reports.createdNotesForManagers', [ 'items' => $this->reports->createdNotesForManagers($date) ]);
     }
 }
