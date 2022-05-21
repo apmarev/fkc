@@ -16,10 +16,13 @@ class WebController extends Controller {
     }
 
     public function getFunction(Request $request, $type) {
-        Telegram::sendMessage([
-            'chat_id' => 228519769,
-            'text' => json_encode($request->all())
-        ]);
+        if($request->has('period')) {
+            Telegram::sendMessage([
+                'chat_id' => 228519769,
+                'text' => $request->input('period')
+            ]);
+
+        }
         return $this->$type();
     }
 
