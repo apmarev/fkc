@@ -81,11 +81,11 @@ table {
 }
 
 .caps {
-    text-transform: uppercase;
-    line-height: 1.2;
+    text-transform: uppercase !important;
+    line-height: 1.2 !important;
 }
 
 th.col {
-    text-transform: uppercase;
-    opacity: 0.8;
+    text-transform: uppercase !important;
+    opacity: 0.8 !important;
 }
