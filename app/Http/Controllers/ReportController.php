@@ -248,13 +248,13 @@ class ReportController extends Controller {
         ];
 
         $items = [];
-        foreach($array as $a) {
+        foreach($array as $k => $a) {
             $size = [
                 'count' => $size['count'] + $a['count'],
                 'price' => $size['price'] + $a['price']
             ];
             if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
-            $items[] = $a;
+            $items[$k] = $a;
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";

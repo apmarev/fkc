@@ -7,7 +7,7 @@
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">Источник</th>
+                <th scope="col">Менеджер</th>
                 <th scope="col">Кол-во</th>
             </tr>
             </thead>
