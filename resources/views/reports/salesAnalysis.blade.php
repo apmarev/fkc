@@ -1,7 +1,8 @@
 <x-layout>
     <div class="cell-wrapper">
         <div class="cell-wrapper__caption">
-            Текущее кол-во сделок в активных статусах (Клиенты в активной работе )
+            <p class="caps">Текущее кол-во сделок в активных статусах</p>
+            <p class="caps">Клиенты в активной работе</p>
         </div>
 
         <table class="table">

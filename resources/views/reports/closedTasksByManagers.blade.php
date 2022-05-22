@@ -1,7 +1,8 @@
 <x-layout>
     <div class="cell-wrapper">
         <div class="cell-wrapper__caption">
-            Закрыто задач по менеджерам (Клиенты в активной работе )
+            <p class="caps">Закрыто задач по менеджерам</p>
+            <p class="caps">Клиенты без активных сделок</p>
         </div>
 
         <table class="table">

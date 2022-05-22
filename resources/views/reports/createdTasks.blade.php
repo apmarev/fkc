@@ -1,7 +1,8 @@
 <x-layout>
     <div class="cell-wrapper">
         <div class="cell-wrapper__caption">
-            Созданные задачи (Клиенты в активной работе )
+            <p class="caps">Созданные задачи</p>
+            <p class="caps">Клиенты в активной работе</p>
         </div>
 
         <table class="table">
