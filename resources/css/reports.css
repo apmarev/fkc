@@ -81,6 +81,7 @@ table {
 }
 
 .caps {
+    font-size: 14px !important;
     text-transform: uppercase !important;
     line-height: 1.2 !important;
 }
