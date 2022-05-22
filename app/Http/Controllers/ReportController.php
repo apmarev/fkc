@@ -22,7 +22,7 @@ class ReportController extends Controller {
         $array = [];
         foreach($statuses as $status) {
             $array[$status['id']] = [
-                'name' => $status['name'],
+                'name' => mb_strtoupper($status['name']),
                 'count' => 0,
                 'price' => 0
             ];
@@ -51,13 +51,27 @@ class ReportController extends Controller {
             $array[$lead['status_id']]['price'] = $price;
         }
 
+        $size = [
+            'count' => 0,
+            'price' => 0
+        ];
+
         $items = [];
         foreach($array as $a) {
+            $size = [
+                'count' => $size['count'] + $a['count'],
+                'price' => $size['price'] + $a['price']
+            ];
             if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
             $items[] = $a;
         }
 
-        return $items;
+        $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
+
+        return [
+            'size' => $size,
+            'items' => $items
+        ];
     }
 
     /**
@@ -200,7 +214,13 @@ class ReportController extends Controller {
 
         }
 
-        return $array;
+        $items = [];
+        foreach($array as $a) {
+            if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
+            $items[] = $a;
+        }
+
+        return $items;
     }
 
     /**

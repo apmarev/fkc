@@ -20,6 +20,11 @@
                         <td>{{ $item['price'] }}</td>
                     </tr>
                 @endforeach
+                <tr>
+                    <td>Всего:</td>
+                    <td>{{ $size['count'] }}</td>
+                    <td>{{ $size['price'] }}</td>
+                </tr>
             </tbody>
         </table>
     </div>
