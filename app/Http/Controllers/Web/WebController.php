@@ -85,41 +85,65 @@ class WebController extends Controller {
      * Виджет «Продажи по менеджерам»
      */
     public function salesByManager($date) {
-        return view('reports.salesByManager', [ 'items' => $this->reports->salesByManager($date) ]);
+        $result = $this->reports->salesByManager($date);
+        return view('reports.salesByManager', [
+            'items' => $result['items'],
+            'size' => $result['size']
+        ]);
     }
 
     /**
      * Виджет «Источники сделок»
      */
     public function transactionSources($date) {
-        return view('reports.transactionSources', [ 'items' => $this->reports->transactionSources($date) ]);
+        $result = $this->reports->transactionSources($date);
+        return view('reports.transactionSources', [
+            'items' => $result['items'],
+            'size' => $result['size']
+        ]);
     }
 
     /**
      * Виджет «Выполненные задачи»
      */
     public function completedTasks($date) {
-        return view('reports.completedTasks', [ 'items' => $this->reports->completedTasks($date) ]);
+        $result = $this->reports->completedTasks($date);
+        return view('reports.completedTasks', [
+            'items' => $result['items'],
+            'size' => $result['size']
+        ]);
     }
 
     /**
      * Виджет «Созданные задачи»
      */
     public function createdTasks($date) {
-        return view('reports.createdTasks', [ 'items' => $this->reports->createdTasks($date) ]);
+        $result = $this->reports->createdTasks($date);
+        return view('reports.createdTasks', [
+            'items' => $result['items'],
+            'size' => $result['size']
+        ]);
     }
 
     /**
      * Виджет «Закрыто задач по менеджерам»
      */
     public function closedTasksByManagers($date) {
-        return view('reports.closedTasksByManagers', [ 'items' => $this->reports->closedTasksByManagers($date) ]);
+        $result = $this->reports->closedTasksByManagers($date);
+        return view('reports.closedTasksByManagers', [
+            'items' => $result['items'],
+            'size' => $result['size']
+        ]);
     }
 
     /**
      * Виджет «Создано примечаний по менеджерам»
      */
     public function createdNotesForManagers($date) {
-        return view('reports.createdNotesForManagers', [ 'items' => $this->reports->createdNotesForManagers($date) ]);
+        $result = $this->reports->createdNotesForManagers($date);
+        return view('reports.createdNotesForManagers', [
+            'items' => $result['items'],
+            'size' => $result['size']
+        ]);
     }
 }
