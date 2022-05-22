@@ -13,13 +13,18 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($items as $item)
+                @foreach($items as $item)
+                    <tr>
+                        <td>{{ $item['name'] }}</td>
+                        <td>{{ $item['count'] }}</td>
+                        <td>{{ $item['price'] }}</td>
+                    </tr>
+                @endforeach
                 <tr>
-                    <td>{{ $item['name'] }}</td>
-                    <td>{{ $item['count'] }}</td>
-                    <td>{{ $item['price'] }}</td>
+                    <td><b>Всего:</b></td>
+                    <td><b>{{ $size['count'] }}</b></td>
+                    <td><b>{{ $size['price'] }}</b></td>
                 </tr>
-            @endforeach
             </tbody>
         </table>
     </div>

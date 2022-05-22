@@ -21,9 +21,9 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td>Всего:</td>
-                    <td>{{ $size['count'] }}</td>
-                    <td>{{ $size['price'] }}</td>
+                    <td><b>Всего:</b></td>
+                    <td><b>{{ $size['count'] }}</b></td>
+                    <td><b>{{ $size['price'] }}</b></td>
                 </tr>
             </tbody>
         </table>

@@ -74,7 +74,11 @@ class WebController extends Controller {
      * Виджет «Сделки по менеджерам»
      */
     public function dealsByManager($date) {
-        return view('reports.dealsByManager', [ 'items' => $this->reports->dealsByManager() ]);
+        $result = $this->reports->dealsByManager();
+        return view('reports.dealsByManager', [
+            'items' => $result['items'],
+            'size' => $result['size']
+        ]);
     }
 
     /**
