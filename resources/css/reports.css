@@ -85,7 +85,7 @@ table {
     line-height: 1.2 !important;
 }
 
-th.col {
+th {
     text-transform: uppercase !important;
     opacity: 0.8 !important;
 }
