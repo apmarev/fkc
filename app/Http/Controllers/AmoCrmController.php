@@ -208,7 +208,7 @@ class AmoCrmController extends Controller {
     }
 
     public static function getSession($name) {
-        return $_SESSION[$name];
+        return isset($_SESSION[$name]) ? $_SESSION[$name] : null;
     }
 
     public function amoNewAccess(Request $request) {
@@ -222,7 +222,6 @@ class AmoCrmController extends Controller {
 
         try {
             $response = $this->amoPostNewAccessAndRefresh($request->input('key'), $request->input('client'), $request->input('secret'));
-
             self::setSession('expires', time() + $response['expires_in']);
             self::setSession('access', $response['access_token']);
 
@@ -268,7 +267,7 @@ class AmoCrmController extends Controller {
     }
 
     public function amoGetStatusAccess() {
-        if(self::getSession('expires') && self::getSession('access') && self::getSession('expires') > time()) {
+        if(self::getSession('expires') != null && self::getSession('access') != null && self::getSession('expires') > time()) {
             return self::getSession('access');
         } else {
             try {
@@ -365,5 +364,9 @@ class AmoCrmController extends Controller {
         }
 
         return 0;
+    }
+
+    public function test() {
+        return $this->amoGet('/leads?limit=1');
     }
 }
