@@ -477,7 +477,13 @@ class ReportController extends Controller {
         ];
     }
 
+    public function test2() {
+        return $_SESSION['access'] . ' ' . $_SESSION['expires'];
+    }
+
     public function test() {
-        return $this->amo->getUsersByGroup();
+        $_SESSION['expires'] = 12332345;
+        $_SESSION['access'] = '12342435363457456757';
+        return $this->test2();
     }
 }

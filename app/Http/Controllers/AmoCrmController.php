@@ -203,6 +203,14 @@ class AmoCrmController extends Controller {
         }
     }
 
+    public static function setSession($name, $value) {
+        $_SESSION[$name] = $value;
+    }
+
+    public static function getSession($name) {
+        return $_SESSION[$name];
+    }
+
     public function amoNewAccess(Request $request) {
         if(
             !$request->input('key') ||
@@ -214,6 +222,9 @@ class AmoCrmController extends Controller {
 
         try {
             $response = $this->amoPostNewAccessAndRefresh($request->input('key'), $request->input('client'), $request->input('secret'));
+
+            self::setSession('expires', time() + $response['expires_in']);
+            self::setSession('access', $response['access_token']);
 
             return Storage::put('amo.txt', json_encode(
                 [
@@ -257,15 +268,19 @@ class AmoCrmController extends Controller {
     }
 
     public function amoGetStatusAccess() {
-        try {
-            $access = json_decode(Storage::get('amo.txt'), true);
-            if(time() >= $access['expires']) {
-                return $this->newAccessTokenByRefreshToken($access);
-            } else {
-                return $access;
+        if(self::getSession('expires') && self::getSession('access') && self::getSession('expires') > time()) {
+            return self::getSession('access');
+        } else {
+            try {
+                $access = json_decode(Storage::get('amo.txt'), true);
+                if(time() >= $access['expires']) {
+                    return $this->newAccessTokenByRefreshToken($access);
+                } else {
+                    return $access;
+                }
+            } catch (\Exception $e) {
+                return CustomApiException::error(404);
             }
-        } catch (\Exception $e) {
-            return CustomApiException::error(404);
         }
     }
 
@@ -286,6 +301,9 @@ class AmoCrmController extends Controller {
                     $access['access'] = $result['access_token'];
                     $access['refresh'] = $result['refresh_token'];
                     $access['expires'] = $result['expires_in'];
+
+                    self::setSession('expires', $result['expires_in']);
+                    self::setSession('access', $result['access_token']);
 
                     Storage::put('amo.txt', json_encode($access));
 

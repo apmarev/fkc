@@ -63,10 +63,23 @@ class WebController extends Controller {
      * Виджет «Анализ продаж»
      */
     public function salesAnalysis($date) {
+
+        $data = [
+            'title' => '',
+            'pipeline' => '',
+            'col' => [
+                'name' => 'Статус',
+                'count' => 'Кол-во',
+                'price' => 'Сумма',
+            ],
+        ];
+
         $result = $this->reports->salesAnalysis();
+
         return view('reports.salesAnalysis', [
             'items' => $result['items'],
-            'size' => $result['size']
+            'size' => $result['size'],
+            'data' => $data
         ]);
     }
 
