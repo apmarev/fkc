@@ -171,7 +171,7 @@ class AmoCrmController extends Controller {
         try {
             $amo = $this->amoGetStatusAccess();
             return Http::withHeaders([
-                "Authorization" => "Bearer {$amo->access}",
+                "Authorization" => "Bearer {}",
                 "Content-Type" => "application/json",
             ])->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}");
         } catch (\Exception $e) {
@@ -183,7 +183,7 @@ class AmoCrmController extends Controller {
         try {
             $amo = $this->amoGetStatusAccess();
             return Http::withHeaders([
-                "Authorization" => "Bearer {$amo->access}",
+                "Authorization" => "Bearer {$amo['access']}",
                 "Content-Type" => "application/json",
             ])->post("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}", $data);
         } catch (\Exception $e) {
@@ -195,7 +195,7 @@ class AmoCrmController extends Controller {
         try {
             $amo = $this->amoGetStatusAccess();
             return Http::withHeaders([
-                "Authorization" => "Bearer {$amo->access}",
+                "Authorization" => "Bearer {$amo['access']}",
                 "Content-Type" => "application/json",
             ])->patch("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}", $data);
         } catch (\Exception $e) {
