@@ -272,6 +272,7 @@ class AmoCrmController extends Controller {
         } else {
             try {
                 $access = $this->__access->getAccessByID(1);
+                return $access;
                 // $access = json_decode(Storage::get('amo.txt'), true);
                 if(time() >= $access->expires) {
                     return $this->newAccessTokenByRefreshToken($access);
