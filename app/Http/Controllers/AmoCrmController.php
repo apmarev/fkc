@@ -171,7 +171,7 @@ class AmoCrmController extends Controller {
         try {
             $amo = $this->amoGetStatusAccess();
             return Http::withHeaders([
-                "Authorization" => "Bearer {}",
+                "Authorization" => "Bearer {$amo['access']}",
                 "Content-Type" => "application/json",
             ])->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}");
         } catch (\Exception $e) {
@@ -374,6 +374,6 @@ class AmoCrmController extends Controller {
     }
 
     public function test() {
-        return $this->amoGet('/leads?limit=1');
+        return $this->__access->getAccessByID(1);
     }
 }
