@@ -374,6 +374,6 @@ class AmoCrmController extends Controller {
     }
 
     public function test() {
-        return $this->__access->getAccessByID(1);
+        return $this->amoGetStatusAccess();
     }
 }
