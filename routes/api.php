@@ -16,5 +16,3 @@ Route::get('/reports/completedTasks', [ReportController::class, 'completedTasks'
 Route::get('/reports/createdNotesForManagers', [ReportController::class, 'createdNotesForManagers']);
 
 Route::get('/test', [AmoCrmController::class, 'test']);
-
-

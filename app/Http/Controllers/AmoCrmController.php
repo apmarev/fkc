@@ -171,7 +171,7 @@ class AmoCrmController extends Controller {
         try {
             $amo = $this->amoGetStatusAccess();
             return Http::withHeaders([
-                "Authorization" => "Bearer {$amo['access']}",
+                "Authorization" => "Bearer {$amo->access}",
                 "Content-Type" => "application/json",
             ])->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}");
         } catch (\Exception $e) {
@@ -183,7 +183,7 @@ class AmoCrmController extends Controller {
         try {
             $amo = $this->amoGetStatusAccess();
             return Http::withHeaders([
-                "Authorization" => "Bearer {$amo['access']}",
+                "Authorization" => "Bearer {$amo->access}",
                 "Content-Type" => "application/json",
             ])->post("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}", $data);
         } catch (\Exception $e) {
@@ -195,7 +195,7 @@ class AmoCrmController extends Controller {
         try {
             $amo = $this->amoGetStatusAccess();
             return Http::withHeaders([
-                "Authorization" => "Bearer {$amo['access']}",
+                "Authorization" => "Bearer {$amo->access}",
                 "Content-Type" => "application/json",
             ])->patch("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}", $data);
         } catch (\Exception $e) {
@@ -208,7 +208,7 @@ class AmoCrmController extends Controller {
     }
 
     public static function getSession($name) {
-        return isset($_SESSION[$name]) ? $_SESSION[$name] : null;
+        return $_SESSION[$name] ?? null;
     }
 
     public function amoNewAccess(Request $request) {
@@ -225,26 +225,26 @@ class AmoCrmController extends Controller {
             self::setSession('expires', time() + $response['expires_in']);
             self::setSession('access', $response['access_token']);
 
-            return Storage::put('amo.txt', json_encode(
-                [
-                    'name'          => 'amo',
-                    'description'   => $request->input('description'),
-                    'secret'        => $request->input('secret'),
-                    'client'        => $request->input('client'),
-                    'access'        => $response['access_token'],
-                    'refresh'       => $response['refresh_token'],
-                    'expires'       => time() + $response['expires_in'],
-                ]
-            ));
-//            return $this->__access->create([
-//                'name'          => 'amo',
-//                'description'   => $request->input('description'),
-//                'secret'        => $request->input('secret'),
-//                'client'        => $request->input('client'),
-//                'access'        => $response['access_token'],
-//                'refresh'       => $response['refresh_token'],
-//                'expires'       => time() + $response['expires_in'],
-//            ]);
+//            return Storage::put('amo.txt', json_encode(
+//                [
+//                    'name'          => 'amo',
+//                    'description'   => $request->input('description'),
+//                    'secret'        => $request->input('secret'),
+//                    'client'        => $request->input('client'),
+//                    'access'        => $response['access_token'],
+//                    'refresh'       => $response['refresh_token'],
+//                    'expires'       => time() + $response['expires_in'],
+//                ]
+//            ));
+            return $this->__access->create([
+                'name'          => 'amo',
+                'description'   => $request->input('description'),
+                'secret'        => $request->input('secret'),
+                'client'        => $request->input('client'),
+                'access'        => $response['access_token'],
+                'refresh'       => $response['refresh_token'],
+                'expires'       => time() + $response['expires_in'],
+            ]);
         } catch (\Exception $e) {
             return CustomApiException::error(500, $e->getMessage());
         }
@@ -271,8 +271,9 @@ class AmoCrmController extends Controller {
             return self::getSession('access');
         } else {
             try {
-                $access = json_decode(Storage::get('amo.txt'), true);
-                if(time() >= $access['expires']) {
+                $access = $this->__access->getAccessByID(1);
+                // $access = json_decode(Storage::get('amo.txt'), true);
+                if(time() >= $access->expires) {
                     return $this->newAccessTokenByRefreshToken($access);
                 } else {
                     return $access;
@@ -295,16 +296,22 @@ class AmoCrmController extends Controller {
 
             if(isset($result['access_token'])) {
                 try {
-                    $access = json_decode(Storage::get('amo.txt'), true);
+                    $access = $this->__access->getAccessByID($service['id']);
+                    $access->__set('access', $result['access_token']);
+                    $access->__set('refresh', $result['refresh_token']);
+                    $access->__set('expires', time() + $result['expires_in']);
+                    $access->save();
 
-                    $access['access'] = $result['access_token'];
-                    $access['refresh'] = $result['refresh_token'];
-                    $access['expires'] = $result['expires_in'];
+//                    $access = json_decode(Storage::get('amo.txt'), true);
+//
+//                    $access['access'] = $result['access_token'];
+//                    $access['refresh'] = $result['refresh_token'];
+//                    $access['expires'] = $result['expires_in'];
 
                     self::setSession('expires', $result['expires_in']);
                     self::setSession('access', $result['access_token']);
 
-                    Storage::put('amo.txt', json_encode($access));
+                    // Storage::put('amo.txt', json_encode($access));
 
                     return $access;
                 } catch (\Exception $e) {
