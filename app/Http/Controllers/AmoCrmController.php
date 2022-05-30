@@ -286,13 +286,6 @@ class AmoCrmController extends Controller {
 
     public function newAccessTokenByRefreshToken($service) {
         try {
-            return [
-                'client_id' => $service->client,
-                'client_secret' => $service->secret,
-                'grant_type' => 'refresh_token',
-                'refresh_token' => $service->refresh,
-                'redirect_uri' => config('app.services.amo.domain'),
-            ];
             $result = Http::asForm()->post("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/oauth2/access_token", [
                 'client_id' => $service->client,
                 'client_secret' => $service->secret,
@@ -300,7 +293,7 @@ class AmoCrmController extends Controller {
                 'refresh_token' => $service->refresh,
                 'redirect_uri' => config('app.services.amo.domain'),
             ]);
-
+            return $result;
             if(isset($result['access_token'])) {
                 try {
                     $access = $this->__access->getAccessByID($service->id);
