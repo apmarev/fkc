@@ -272,7 +272,6 @@ class AmoCrmController extends Controller {
         } else {
             try {
                 $access = $this->__access->getAccessByID(1);
-                return $access->expires;
                 // $access = json_decode(Storage::get('amo.txt'), true);
                 if(time() >= $access->expires) {
                     return $this->newAccessTokenByRefreshToken($access);
@@ -288,16 +287,16 @@ class AmoCrmController extends Controller {
     public function newAccessTokenByRefreshToken($service) {
         try {
             $result = Http::asForm()->post("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/oauth2/access_token", [
-                'client_id' => $service['client'],
-                'client_secret' => $service['secret'],
+                'client_id' => $service->client,
+                'client_secret' => $service->secret,
                 'grant_type' => 'refresh_token',
-                'refresh_token' => $service['refresh'],
+                'refresh_token' => $service->refresh,
                 'redirect_uri' => config('app.services.amo.domain'),
             ]);
 
             if(isset($result['access_token'])) {
                 try {
-                    $access = $this->__access->getAccessByID($service['id']);
+                    $access = $this->__access->getAccessByID($service->id);
                     $access->__set('access', $result['access_token']);
                     $access->__set('refresh', $result['refresh_token']);
                     $access->__set('expires', time() + $result['expires_in']);
