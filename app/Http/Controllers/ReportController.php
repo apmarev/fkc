@@ -24,7 +24,8 @@ class ReportController extends Controller {
             $array[$status['id']] = [
                 'name' => mb_strtoupper($status['name']),
                 'count' => 0,
-                'price' => 0
+                'price' => 0,
+                'budget' => 0
             ];
         }
 
@@ -49,24 +50,29 @@ class ReportController extends Controller {
 
             $array[$lead['status_id']]['count'] = $count;
             $array[$lead['status_id']]['price'] = $price;
+            $array[$lead['status_id']]['budget'] = $lead['price'];
         }
 
         $size = [
             'count' => 0,
-            'price' => 0
+            'price' => 0,
+            'budget' => 0
         ];
 
         $items = [];
         foreach($array as $a) {
             $size = [
                 'count' => $size['count'] + $a['count'],
-                'price' => $size['price'] + $a['price']
+                'price' => $size['price'] + $a['price'],
+                'budget' => $size['budget'] + $a['budget']
             ];
             if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
+            if($a['budget'] > 0) $a['budget'] = number_format($a['budget'], 2, ',', ' ') . " ₽";
             $items[] = $a;
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
+        $size['budget'] = number_format($size['budget'], 2, ',', ' ') . " ₽";
 
         return [
             'size' => $size,
