@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\AmoCrmController;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller {
 
@@ -12,12 +13,48 @@ class ReportController extends Controller {
         $this->amo = $amo;
     }
 
-    public function getAllReports() {
+    public function getAllReports(Request $request) {
 
-        $date = [
-            'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
-            'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
-        ];
+        $date = [];
+
+        if($request->has('period')) {
+            $period = $request->input('period');
+            if($period == 'custom') {
+                $date = [
+                    'from' => strtotime($request->input('date_from')),
+                    'to' => strtotime($request->input('date_to'))
+                ];
+            } else {
+                if($period == 'week') {
+                    $date = [
+                        'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00.00.01"),
+                        'to' => time(),
+                    ];
+                } else if($period == 'day') {
+                    $date = [
+                        'from' => strtotime(date('d.m.Y') . "00.00.01"),
+                        'to' => time()
+                    ];
+                } else if($period == 'yesterday') {
+                    $date = [
+                        'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
+                        'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
+                    ];
+                } else if($period == 'month') {
+                    $date = [
+                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00.00.01"),
+                        'to' => time(),
+                        'test' => date("d.m.Y", strtotime('first day of this month'))
+                    ];
+                }
+            }
+//
+//            Telegram::sendMessage([
+//                'chat_id' => 228519769,
+//                'text' => json_encode($date)
+//            ]);
+
+        }
 
 //        $this->completedTasks();
 //        $this->createdTasks();
@@ -32,12 +69,48 @@ class ReportController extends Controller {
         ]);
     }
 
-    public function getTwoReports() {
+    public function getTwoReports(Request $request) {
 
-        $date = [
-            'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
-            'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
-        ];
+        $date = [];
+
+        if($request->has('period')) {
+            $period = $request->input('period');
+            if($period == 'custom') {
+                $date = [
+                    'from' => strtotime($request->input('date_from')),
+                    'to' => strtotime($request->input('date_to'))
+                ];
+            } else {
+                if($period == 'week') {
+                    $date = [
+                        'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00.00.01"),
+                        'to' => time(),
+                    ];
+                } else if($period == 'day') {
+                    $date = [
+                        'from' => strtotime(date('d.m.Y') . "00.00.01"),
+                        'to' => time()
+                    ];
+                } else if($period == 'yesterday') {
+                    $date = [
+                        'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
+                        'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
+                    ];
+                } else if($period == 'month') {
+                    $date = [
+                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00.00.01"),
+                        'to' => time(),
+                        'test' => date("d.m.Y", strtotime('first day of this month'))
+                    ];
+                }
+            }
+//
+//            Telegram::sendMessage([
+//                'chat_id' => 228519769,
+//                'text' => json_encode($date)
+//            ]);
+
+        }
 
 
         return view('reports.reportTwo', [
