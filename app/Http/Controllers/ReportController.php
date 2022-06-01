@@ -31,6 +31,8 @@ class ReportController extends Controller {
         return view('reports.report', [
             'salesAnalysis' => $this->salesAnalysis(),
             'transactionSources' => $this->transactionSources($date),
+            'dealsByManager' => $this->dealsByManager(),
+            'salesByManager' => $this->salesByManager($date),
         ]);
     }
 
