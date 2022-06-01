@@ -116,7 +116,7 @@ class ReportController extends Controller {
         return view('reports.reportTwo', [
             'completedTasks' => $this->completedTasks($date),
             'createdTasks' => $this->createdTasks($date),
-            'closedTasksByManagers' => $this->closedTasksByManagers($date),
+//            'closedTasksByManagers' => $this->closedTasksByManagers($date),
 //            'createdNotesForManagers' => $this->createdNotesForManagers($date),
         ]);
     }

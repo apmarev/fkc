@@ -8,7 +8,7 @@
                 <x-reports.createdTasks :items="$createdTasks" />
             </div>
             <div class="col-6">
-                <x-reports.closedTasksByManagers :items="$closedTasksByManagers" />
+{{--                <x-reports.closedTasksByManagers :items="$closedTasksByManagers" />--}}
             </div>
             <div class="col-6">
 {{--                <x-reports.createdNotesForManagers :items="$createdNotesForManagers" />--}}
