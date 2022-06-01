@@ -7,8 +7,12 @@
             <div class="col-6">
                 <x-reports.transactionSources :items="$transactionSources" />
             </div>
-            <div class="col-6"></div>
-            <div class="col-6"></div>
+            <div class="col-6">
+                <x-reports.dealsByManager :items="$dealsByManager" />
+            </div>
+            <div class="col-6">
+                <x-reports.salesByManager :items="$salesByManager" />
+            </div>
             <div class="col-6"></div>
             <div class="col-6"></div>
         </div>
