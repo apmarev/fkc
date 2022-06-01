@@ -15,4 +15,4 @@ Route::get('/reports/transactionSources', [ReportController::class, 'transaction
 Route::get('/reports/completedTasks', [ReportController::class, 'completedTasks']);
 Route::get('/reports/createdNotesForManagers', [ReportController::class, 'createdNotesForManagers']);
 
-Route::get('/test', [AmoCrmController::class, 'test']);
+Route::get('/test', [AmoCrmController::class, 'amoGetStatusAccess']);

@@ -12,6 +12,28 @@ class ReportController extends Controller {
         $this->amo = $amo;
     }
 
+    public function getAllReports() {
+
+        $date = [
+            'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
+            'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
+        ];
+
+//        $this->salesAnalysis();
+//        $this->transactionSources();
+//        $this->dealsByManager();
+//        $this->salesByManager();
+//        $this->completedTasks();
+//        $this->createdTasks();
+//        $this->closedTasksByManagers();
+//        $this->createdNotesForManagers();
+
+        return view('reports.report', [
+            'salesAnalysis' => $this->salesAnalysis(),
+            'transactionSources' => $this->transactionSources($date),
+        ]);
+    }
+
     /**
      * Виджет «Анализ продаж»
      */
@@ -34,7 +56,6 @@ class ReportController extends Controller {
         $filter = "&filter[pipeline_id]={$pipeline}";
         for($i=0;$i<sizeof($statuses);$i++) $filter .= "&filter[statuses][{$i}][pipeline_id]={$pipeline}&filter[statuses][{$i}][status_id]={$statuses[$i]['id']}";
         $leads = $this->amo->getAllListByFilter('leads', $filter);
-
 
         foreach($leads as $lead) {
             $custom = $this->amo->getIsSetListCustomFields($lead);
