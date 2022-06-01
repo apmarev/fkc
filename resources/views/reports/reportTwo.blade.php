@@ -11,7 +11,7 @@
                 <x-reports.closedTasksByManagers :items="$closedTasksByManagers" />
             </div>
             <div class="col-6">
-                <x-reports.createdNotesForManagers :items="$createdNotesForManagers" />
+{{--                <x-reports.createdNotesForManagers :items="$createdNotesForManagers" />--}}
             </div>
         </div>
     </div>
