@@ -19,10 +19,6 @@ class ReportController extends Controller {
             'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
         ];
 
-//        $this->salesAnalysis();
-//        $this->transactionSources();
-//        $this->dealsByManager();
-//        $this->salesByManager();
 //        $this->completedTasks();
 //        $this->createdTasks();
 //        $this->closedTasksByManagers();
@@ -33,6 +29,22 @@ class ReportController extends Controller {
             'transactionSources' => $this->transactionSources($date),
             'dealsByManager' => $this->dealsByManager(),
             'salesByManager' => $this->salesByManager($date),
+        ]);
+    }
+
+    public function getTwoReports() {
+
+        $date = [
+            'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
+            'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
+        ];
+
+
+        return view('reports.report', [
+            'completedTasks' => $this->completedTasks($date),
+            'createdTasks' => $this->createdTasks($date),
+            'closedTasksByManagers' => $this->closedTasksByManagers($date),
+            'createdNotesForManagers' => $this->createdNotesForManagers($date),
         ]);
     }
 

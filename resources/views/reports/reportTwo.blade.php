@@ -2,16 +2,16 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-6">
-                <x-reports.salesAnalysis :items="$salesAnalysis" />
+                <x-reports.completedTasks :items="$completedTasks" />
             </div>
             <div class="col-6">
-                <x-reports.transactionSources :items="$transactionSources" />
+                <x-reports.createdTasks :items="$createdTasks" />
             </div>
             <div class="col-6">
-                <x-reports.dealsByManager :items="$dealsByManager" />
+                <x-reports.closedTasksByManagers :items="$closedTasksByManagers" />
             </div>
             <div class="col-6">
-                <x-reports.salesByManager :items="$salesByManager" />
+                <x-reports.createdNotesForManagers :items="$createdNotesForManagers" />
             </div>
         </div>
     </div>
