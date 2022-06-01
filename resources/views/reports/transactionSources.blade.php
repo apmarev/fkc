@@ -20,7 +20,7 @@
                         <td>{{ $k }}</td>
                         <td>{{ $v['count'] }}</td>
                         <td>{{ $v['price'] }}</td>
-                        <td>{{ $item['budget'] }}</td>
+                        <td>{{ $v['budget'] }}</td>
                     </tr>
                 @endforeach
                 <tr>
