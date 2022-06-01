@@ -94,7 +94,8 @@ class ReportController extends Controller {
                 'id' => $manager['id'],
                 'name' => $manager['name'],
                 'count' => 0,
-                'price' => 0
+                'price' => 0,
+                'budget' => 0
             ];
         }
 
@@ -121,6 +122,7 @@ class ReportController extends Controller {
 
                     $array[$k]['count'] = $count;
                     $array[$k]['price'] = $price;
+                    $array[$k]['budget'] = $lead['price'];
                 }
             }
 
@@ -128,20 +130,25 @@ class ReportController extends Controller {
 
         $size = [
             'count' => 0,
-            'price' => 0
+            'price' => 0,
+            'budget' => 0
         ];
 
         $items = [];
         foreach($array as $a) {
             $size = [
                 'count' => $size['count'] + $a['count'],
-                'price' => $size['price'] + $a['price']
+                'price' => $size['price'] + $a['price'],
+                'budget' => $size['budget'] + $a['budget']
             ];
             if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
+            if($a['budget'] > 0) $a['budget'] = number_format($a['budget'], 2, ',', ' ') . " ₽";
+
             $items[] = $a;
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
+        $size['budget'] = number_format($size['budget'], 2, ',', ' ') . " ₽";
 
         return [
             'size' => $size,
@@ -162,7 +169,8 @@ class ReportController extends Controller {
                 'id' => $manager['id'],
                 'name' => $manager['name'],
                 'count' => 0,
-                'price' => 0
+                'price' => 0,
+                'budget' => 0
             ];
         }
 
@@ -187,26 +195,31 @@ class ReportController extends Controller {
 
                     $array[$k]['count'] = $count;
                     $array[$k]['price'] = $price;
+                    $array[$k]['budget'] = $lead['price'];
                 }
             }
         }
 
         $size = [
             'count' => 0,
-            'price' => 0
+            'price' => 0,
+            'budget' => 0
         ];
 
         $items = [];
         foreach($array as $a) {
             $size = [
                 'count' => $size['count'] + $a['count'],
-                'price' => $size['price'] + $a['price']
+                'price' => $size['price'] + $a['price'],
+                'budget' => $size['budget'] + $a['budget']
             ];
             if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
+            if($a['budget'] > 0) $a['budget'] = number_format($a['budget'], 2, ',', ' ') . " ₽";
             $items[] = $a;
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
+        $size['budget'] = number_format($size['budget'], 2, ',', ' ') . " ₽";
 
         return [
             'size' => $size,
@@ -237,12 +250,14 @@ class ReportController extends Controller {
             if(isset($array[$resource])) {
                 $array[$resource] = [
                     'price' => $array[$resource]['price'] + $price,
-                    'count' => $array[$resource]['count'] + 1
+                    'count' => $array[$resource]['count'] + 1,
+                    'budget' => $array[$resource]['budget'] + $lead['price'],
                 ];
             } else {
                 $array[$resource] = [
                     'price' => $price,
-                    'count' => 1
+                    'count' => 1,
+                    'budget' => $lead['price']
                 ];
             }
 
@@ -250,20 +265,24 @@ class ReportController extends Controller {
 
         $size = [
             'count' => 0,
-            'price' => 0
+            'price' => 0,
+            'budget' => 0
         ];
 
         $items = [];
         foreach($array as $k => $a) {
             $size = [
                 'count' => $size['count'] + $a['count'],
-                'price' => $size['price'] + $a['price']
+                'price' => $size['price'] + $a['price'],
+                'budget' => $size['budget'] + $a['budget']
             ];
             if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
+            if($a['budget'] > 0) $a['budget'] = number_format($a['budget'], 2, ',', ' ') . " ₽";
             $items[$k] = $a;
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
+        $size['budget'] = number_format($size['budget'], 2, ',', ' ') . " ₽";
 
         return [
             'size' => $size,
