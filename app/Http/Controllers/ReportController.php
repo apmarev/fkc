@@ -19,6 +19,8 @@ class ReportController extends Controller {
         $pipeline = 3965530; // Клиенты в активной работе
         $statuses = $this->amo->getStatusesByPipeline($pipeline);
 
+        $statuses = array_reverse($statuses);
+
         $array = [];
         foreach($statuses as $status) {
             $array[$status['id']] = [
