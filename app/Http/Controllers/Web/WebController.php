@@ -49,12 +49,6 @@ class WebController extends Controller {
                     ];
                 }
             }
-//
-//            Telegram::sendMessage([
-//                'chat_id' => 228519769,
-//                'text' => json_encode($date)
-//            ]);
-
         }
         return $this->$type($date);
     }
@@ -62,7 +56,7 @@ class WebController extends Controller {
     /**
      * Виджет «Анализ продаж»
      */
-    public function salesAnalysis($date) {
+    public function salesAnalysis($date = '') {
 
         $data = [
             'title' => '',
@@ -86,7 +80,7 @@ class WebController extends Controller {
     /**
      * Виджет «Сделки по менеджерам»
      */
-    public function dealsByManager($date) {
+    public function dealsByManager($date = '') {
         $result = $this->reports->dealsByManager();
         return view('reports.dealsByManager', [
             'items' => $result['items'],
