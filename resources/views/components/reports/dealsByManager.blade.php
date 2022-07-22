@@ -24,18 +24,22 @@
                         <b>{{ $item['count'] }}</b>
                     </td>
                     <td>
-                        <b>{{ $item['price'] }}</b>
+                        <b>{{ number_format($item['price'], 2, ',') }} ₽</b>
                     </td>
                     <td>
-                        <b>{{ $item['budget'] }}</b>
+                        <b>{{ number_format($item['budget'], 2, ',') }} ₽</b>
                     </td>
                 </tr>
                 @foreach($item['users'] as $user)
                     <tr>
                         <td>{{ $user['name'] }}</td>
                         <td>{{ $user['count'] }}</td>
-                        <td>{{ $user['price'] }}</td>
-                        <td>{{ $user['budget'] }}</td>
+                        <td>
+                            <b>{{ number_format($user['price'], 2, ',') }} ₽</b>
+                        </td>
+                        <td>
+                            <b>{{ number_format($user['budget'], 2, ',') }} ₽</b>
+                        </td>
                     </tr>
                 @endforeach
             @endif
