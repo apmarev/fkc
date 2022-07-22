@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\CustomApiException;
+use App\Models\Access;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -268,16 +269,21 @@ class AmoCrmController extends Controller {
     }
 
     public function amoGetStatusAccess() {
-        try {
-            $access = $this->__access->getAccessByID(1);
-            if(time() >= $access->expires) {
-                return $this->newAccessTokenByRefreshToken($access);
-            } else {
-                return $access;
-            }
-        } catch (\Exception $e) {
+        if($access = Access::find(1)) {
+            return $access;
+        } else {
             return CustomApiException::error(404);
         }
+//        try {
+//            $access = $this->__access->getAccessByID(1);
+//            if(time() >= $access->expires) {
+//                return $this->newAccessTokenByRefreshToken($access);
+//            } else {
+//                return $access;
+//            }
+//        } catch (\Exception $e) {
+//            return CustomApiException::error(404);
+//        }
     }
 
     public function newAccessTokenByRefreshToken($service) {
