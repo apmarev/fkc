@@ -26,12 +26,11 @@ class AmoCrmController extends Controller {
         ]);
     }
 
-    public static function getIsSetList($data, string $type): array {
+    public static function getIsSetList(array $data, string $type): array {
         if(isset($data['_embedded']) && isset($data['_embedded'][$type]) && is_array($data['_embedded'][$type]) && sizeof($data['_embedded'][$type]) > 0) {
             return $data['_embedded'][$type];
-        } else if(isset($data->_embedded) && isset($data->_embedded->$type) && is_array($data->_embedded->$type) && sizeof($data->_embedded->$type) > 0) {
-            return $data->_embedded->$type;
         }
+
         return [];
     }
 
