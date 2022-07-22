@@ -16,6 +16,20 @@ class AmoCrmController extends Controller {
         $this->__access = $__access;
     }
 
+    public static function getUsersGroups(): array {
+        return [
+            406465 => [ 'name' => 'Отдел Боровковой Тани', 'users' => [] ],
+            406468 => [ 'name' => 'Отдел Кашкаровой Наташи', 'users' => [] ],
+            406471 => [ 'name' => 'Отдел Губина Михаила', 'users' => [] ],
+            406474 => [ 'name' => 'Отдел Есина Паши', 'users' => [] ],
+            406477 => [ 'name' => 'Отдел Долговой Алины', 'users' => [] ],
+            406480 => [ 'name' => 'Отдел Савиной Крис', 'users' => [] ],
+            406483 => [ 'name' => 'Отдел Шпортало Анастасии', 'users' => [] ],
+            406486 => [ 'name' => 'Отдел Тришина Михаила', 'users' => [] ],
+            406489 => [ 'name' => 'Отдел Лосевой Юлии', 'users' => [] ],
+        ];
+    }
+
     public function createLead($title, $pipelineID, $statusID, $custom) {
         return $this->amoPost('/leads', [
             [
@@ -42,19 +56,26 @@ class AmoCrmController extends Controller {
         return [];
     }
 
-    public function getUsersByGroup($groupId = null) {
+    public function getUsersByGroup() {
         $allUsers = $this->amoGet('/users');
         $list = $this->getIsSetList($allUsers, 'users');
 
-        $users = [];
+        $groups = self::getUsersGroups();
 
         foreach($list as $user) {
-            if($user['rights']['group_id'] === $groupId) {
-                $users[] = $user;
+            if(isset($groups[$user['rights']['group_id']])) {
+                $groups[$user['rights']['group_id']]['users'][] = [
+                    'id' => $user['id'],
+                    'name' => $user['name'],
+                    'group' => $user['rights']['group_id'],
+                    'count' => 0,
+                    'price' => 0,
+                    'budget' => 0
+                ];
             }
         }
 
-        return $users;
+        return $groups;
     }
 
     public function getStatusesByPipeline($pipelineId) {

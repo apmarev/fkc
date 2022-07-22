@@ -15,12 +15,21 @@
         </thead>
         <tbody>
         @foreach($items['items'] as $item)
-            <tr>
-                <td>{{ $item['name'] }}</td>
-                <td>{{ $item['count'] }}</td>
-                <td>{{ $item['price'] }}</td>
-                <td>{{ $item['budget'] }}</td>
-            </tr>
+            @if(sizeof($item['users']) > 0)
+                <tr>
+                    <td colspan="4">
+                        {{ $item['name'] }}
+                    </td>
+                </tr>
+                @foreach($item['users'] as $user)
+                    <tr>
+                        <td>{{ $user['name'] }}</td>
+                        <td>{{ $user['count'] }}</td>
+                        <td>{{ $user['price'] }}</td>
+                        <td>{{ $user['budget'] }}</td>
+                    </tr>
+                @endforeach
+            @endif
         @endforeach
         <tr>
             <td><b>Всего:</b></td>

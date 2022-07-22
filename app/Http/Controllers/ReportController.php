@@ -60,11 +60,13 @@ class ReportController extends Controller {
 //        $this->createdTasks();
 //        $this->closedTasksByManagers();
 //        $this->createdNotesForManagers();
+        $data = $this->getLeadsFromPipelineActiveClients();
+
 
         return view('reports.report', [
-            'salesAnalysis' => $this->salesAnalysis(),
+            'salesAnalysis' => $this->salesAnalysis($data),
             'transactionSources' => $this->transactionSources($date),
-            'dealsByManager' => $this->dealsByManager(),
+            'dealsByManager' => $this->dealsByManager($data),
             'salesByManager' => $this->salesByManager($date),
         ]);
     }
@@ -121,14 +123,27 @@ class ReportController extends Controller {
         ]);
     }
 
+    protected function getLeadsFromPipelineActiveClients() {
+        $pipeline = 3965530; // Клиенты в активной работе
+        $statuses = $this->amo->getStatusesByPipeline($pipeline);
+        $statuses = array_reverse($statuses);
+
+        $filter = "&filter[pipeline_id]={$pipeline}";
+        for($i=0;$i<sizeof($statuses);$i++) $filter .= "&filter[statuses][{$i}][pipeline_id]={$pipeline}&filter[statuses][{$i}][status_id]={$statuses[$i]['id']}";
+
+        return [
+            'statuses' => $statuses,
+            'leads' => $this->amo->getAllListByFilter('leads', $filter)
+        ];
+    }
+
     /**
      * Виджет «Анализ продаж»
      */
-    public function salesAnalysis() {
-        $pipeline = 3965530; // Клиенты в активной работе
-        $statuses = $this->amo->getStatusesByPipeline($pipeline);
+    public function salesAnalysis($data) {
 
-        $statuses = array_reverse($statuses);
+        $leads = $data['leads'];
+        $statuses = $data['statuses'];
 
         $array = [];
         foreach($statuses as $status) {
@@ -139,10 +154,6 @@ class ReportController extends Controller {
                 'budget' => 0
             ];
         }
-
-        $filter = "&filter[pipeline_id]={$pipeline}";
-        for($i=0;$i<sizeof($statuses);$i++) $filter .= "&filter[statuses][{$i}][pipeline_id]={$pipeline}&filter[statuses][{$i}][status_id]={$statuses[$i]['id']}";
-        $leads = $this->amo->getAllListByFilter('leads', $filter);
 
         foreach($leads as $lead) {
             $custom = $this->amo->getIsSetListCustomFields($lead);
@@ -160,7 +171,7 @@ class ReportController extends Controller {
 
             $array[$lead['status_id']]['count'] = $count;
             $array[$lead['status_id']]['price'] = $price;
-            $array[$lead['status_id']]['budget'] = $lead['price'];
+            $array[$lead['status_id']]['budget'] = $array[$lead['status_id']]['budget'] + $lead['price'];
         }
 
         $size = [
@@ -193,48 +204,37 @@ class ReportController extends Controller {
     /**
      * Виджет «Сделки по менеджерам»
      */
-    public function dealsByManager() {
-        $pipeline = 3965530; // Клиенты в активной работе
-        $statuses = $this->amo->getStatusesByPipeline($pipeline);
-
-        $array = [];
+    public function dealsByManager($data) {
+        $leads = $data['leads'];
         $managers = $this->amo->getUsersByGroup();
-        foreach($managers as $manager) {
-            $array[$manager['id']] = [
-                'id' => $manager['id'],
-                'name' => $manager['name'],
-                'count' => 0,
-                'price' => 0,
-                'budget' => 0
-            ];
-        }
 
-        $filter = "&filter[pipeline_id]={$pipeline}";
-        for($i=0;$i<sizeof($statuses);$i++) $filter .= "&filter[statuses][{$i}][pipeline_id]={$pipeline}&filter[statuses][{$i}][status_id]={$statuses[$i]['id']}";
-        $leads = $this->amo->getAllListByFilter('leads', $filter);
+        foreach($managers as $k => $v) {
 
-        foreach($array as $k => $v) {
+            $i = 0;
+            foreach($v['users'] as $user) {
+                foreach($leads as $lead) {
+                    if($lead['responsible_user_id'] == $user['id']) {
+                        $custom = $this->amo->getIsSetListCustomFields($lead);
 
-            foreach($leads as $lead) {
-                if($lead['responsible_user_id'] == $k) {
-                    $custom = $this->amo->getIsSetListCustomFields($lead);
+                        $count = 0;
+                        $price = 0;
 
-                    $count = 0;
-                    $price = 0;
+                        foreach($custom as $c)
+                            if($c['field_id'] == 915455) $price = $c['values'][0]['value'];
 
-                    foreach($custom as $c)
-                        if($c['field_id'] == 915455) $price = $c['values'][0]['value'];
 
-                    if( isset($array[$k]) ) {
-                        $price = $price + $array[$k]['price'];
-                        $count = $array[$k]['count'] + 1;
+                        $price = $price + $v['users'][$i]['price'];
+                        $count = $v['users'][$i]['count'] + 1;
+
+                        $v['users'][$i]['count'] = $count;
+                        $v['users'][$i]['price'] = $price;
+                        $v['users'][$i]['budget'] = $v['users'][$i]['budget'] + $lead['price'];
                     }
-
-                    $array[$k]['count'] = $count;
-                    $array[$k]['price'] = $price;
-                    $array[$k]['budget'] = $lead['price'];
                 }
+                $i++;
             }
+
+            $managers[$k] = $v;
 
         }
 
@@ -244,17 +244,16 @@ class ReportController extends Controller {
             'budget' => 0
         ];
 
-        $items = [];
-        foreach($array as $a) {
-            $size = [
-                'count' => $size['count'] + $a['count'],
-                'price' => $size['price'] + $a['price'],
-                'budget' => $size['budget'] + $a['budget']
-            ];
-            if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
-            if($a['budget'] > 0) $a['budget'] = number_format($a['budget'], 2, ',', ' ') . " ₽";
-
-            $items[] = $a;
+        foreach($managers as $k => $v) {
+            foreach($v['users'] as $user) {
+                $size = [
+                    'count' => $size['count'] + $user['count'],
+                    'price' => $size['price'] + $user['price'],
+                    'budget' => $size['budget'] + $user['budget']
+                ];
+                if($user['price'] > 0) $user['price'] = number_format($user['price'], 2, ',', ' ') . " ₽";
+                if($user['budget'] > 0) $user['budget'] = number_format($user['budget'], 2, ',', ' ') . " ₽";
+            }
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
@@ -262,7 +261,7 @@ class ReportController extends Controller {
 
         return [
             'size' => $size,
-            'items' => $items
+            'items' => $managers
         ];
     }
 
@@ -274,40 +273,37 @@ class ReportController extends Controller {
 
         $array = [];
         $managers = $this->amo->getUsersByGroup();
-        foreach($managers as $manager) {
-            $array[$manager['id']] = [
-                'id' => $manager['id'],
-                'name' => $manager['name'],
-                'count' => 0,
-                'price' => 0,
-                'budget' => 0
-            ];
-        }
 
         $filter = "&filter[statuses][0][pipeline_id]={$pipeline}&filter[statuses][0][status_id]=142&filter[closed_at][from]={$date['from']}&filter[closed_at][to]={$date['to']}";
         $leads = $this->amo->getAllListByFilter('leads', $filter);
 
-        foreach($array as $k => $v) {
-            foreach($leads as $lead) {
-                if($lead['responsible_user_id'] == $k) {
-                    $custom = $this->amo->getIsSetListCustomFields($lead);
+        foreach($managers as $k => $v) {
+            $i = 0;
+            foreach($v['users'] as $user) {
+                foreach ($leads as $lead) {
+                    if ($lead['responsible_user_id'] == $k) {
+                        $custom = $this->amo->getIsSetListCustomFields($lead);
 
-                    $count = 0;
-                    $price = 0;
+                        $count = 0;
+                        $price = 0;
 
-                    foreach($custom as $c)
-                        if($c['field_id'] == 915455) $price = $c['values'][0]['value'];
+                        foreach ($custom as $c)
+                            if ($c['field_id'] == 915455) $price = $c['values'][0]['value'];
 
-                    if( isset($array[$k]) ) {
-                        $price = $price + $array[$k]['price'];
-                        $count = $array[$k]['count'] + 1;
+
+                        $price = $price + $v['users'][$i]['price'];
+                        $count = $v['users'][$i]['count'] + 1;
+
+
+                        $v['users'][$i]['count'] = $count;
+                        $v['users'][$i]['price'] = $price;
+                        $v['users'][$i]['budget'] = $v['users'][$i]['budget'] + $lead['price'];
                     }
-
-                    $array[$k]['count'] = $count;
-                    $array[$k]['price'] = $price;
-                    $array[$k]['budget'] = $lead['price'];
                 }
+                $i++;
             }
+
+            $managers[$k] = $v;
         }
 
         $size = [
@@ -316,16 +312,16 @@ class ReportController extends Controller {
             'budget' => 0
         ];
 
-        $items = [];
-        foreach($array as $a) {
-            $size = [
-                'count' => $size['count'] + $a['count'],
-                'price' => $size['price'] + $a['price'],
-                'budget' => $size['budget'] + $a['budget']
-            ];
-            if($a['price'] > 0) $a['price'] = number_format($a['price'], 2, ',', ' ') . " ₽";
-            if($a['budget'] > 0) $a['budget'] = number_format($a['budget'], 2, ',', ' ') . " ₽";
-            $items[] = $a;
+        foreach($managers as $k => $v) {
+            foreach($v['users'] as $user) {
+                $size = [
+                    'count' => $size['count'] + $user['count'],
+                    'price' => $size['price'] + $user['price'],
+                    'budget' => $size['budget'] + $user['budget']
+                ];
+                if($user['price'] > 0) $user['price'] = number_format($user['price'], 2, ',', ' ') . " ₽";
+                if($user['budget'] > 0) $user['budget'] = number_format($user['budget'], 2, ',', ' ') . " ₽";
+            }
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
@@ -333,7 +329,7 @@ class ReportController extends Controller {
 
         return [
             'size' => $size,
-            'items' => $items
+            'items' => $managers
         ];
     }
 
