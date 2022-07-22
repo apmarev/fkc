@@ -35,10 +35,10 @@
                         <td>{{ $user['name'] }}</td>
                         <td>{{ $user['count'] }}</td>
                         <td>
-                            <b>{{ number_format($user['price'], 2, ',') }} ₽</b>
+                            {{ number_format($user['price'], 2, ',') }} ₽
                         </td>
                         <td>
-                            <b>{{ number_format($user['budget'], 2, ',') }} ₽</b>
+                            {{ number_format($user['budget'], 2, ',') }} ₽
                         </td>
                     </tr>
                 @endforeach
