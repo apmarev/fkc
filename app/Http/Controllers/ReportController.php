@@ -61,6 +61,8 @@ class ReportController extends Controller {
 //        $this->closedTasksByManagers();
 //        $this->createdNotesForManagers();
 
+        return $this->salesAnalysis();
+
         return view('reports.report', [
             'salesAnalysis' => $this->salesAnalysis(),
             'transactionSources' => $this->transactionSources($date),
