@@ -61,8 +61,6 @@ class ReportController extends Controller {
 //        $this->closedTasksByManagers();
 //        $this->createdNotesForManagers();
 
-        return $this->amo->amoGet("/leads/pipelines/3965530/statuses");
-
         return view('reports.report', [
             'salesAnalysis' => $this->salesAnalysis(),
             'transactionSources' => $this->transactionSources($date),
