@@ -428,11 +428,19 @@ class ReportController extends Controller {
             ];
         }
 
-        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
+        // $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
 
         $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
         $leads = $this->amo->getAllListByFilter('tasks', $filter);
 
+        $filter = "&filter[pipeline_id]={$pipeline}";
+        $t = 0;
+        foreach($leads as $l) {
+            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
+            $t++;
+        }
+
+        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
 
         foreach($array as $k => $v) {
             foreach($leads as $lead) {
@@ -523,47 +531,58 @@ class ReportController extends Controller {
 
         $array = [];
         $managers = $this->amo->getUsersByGroup();
-        foreach($managers as $manager) {
-            $array[$manager['id']] = [
-                'id' => $manager['id'],
-                'name' => $manager['name'],
-                'count' => 0,
-                'price' => 0
-            ];
-        }
 
-        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
+        // $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
 
         $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
         $leads = $this->amo->getAllListByFilter('tasks', $filter);
 
+        $filter = "&filter[pipeline_id]={$pipeline}";
+        $t = 0;
+        foreach($leads as $l) {
+            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
+            $t++;
+        }
 
-        foreach($array as $k => $v) {
-            foreach($leads as $lead) {
-                if($lead['responsible_user_id'] == $k && array_search($lead['entity_id'], array_column($leadsByPipeline, 'id')) > -1) {
+        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
 
-                    $count = 0;
+        foreach($managers as $k => $v) {
+            $i = 0;
+            foreach($v['users'] as $user) {
+                foreach ($leads as $lead) {
+                    if ($lead['responsible_user_id'] == $user['id'] && array_search($lead['entity_id'], array_column($leadsByPipeline, 'id')) > -1) {
 
-                    if( isset($array[$k]) ) {
-                        $count = $array[$k]['count'] + 1;
+                        $count = 0;
+
+                        $count = $v['users'][$i]['count'] + 1;
+
+                        $v['users'][$i]['count'] = $count;
                     }
-
-                    $array[$k]['count'] = $count;
                 }
+                $i++;
             }
+
+            $managers[$k] = $v;
         }
 
         $size = [
             'count' => 0
         ];
 
-        foreach($array as $k => $v) {
-            $size['count'] = $size['count'] + $v['count'];
+        foreach($managers as $k => $v) {
+            foreach($v['users'] as $user) {
+                $size['count'] = $size['count'] + $user['count'];
+
+                $v['count'] = $v['count'] + $user['count'];
+                $v['price'] = $v['price'] + $user['price'];
+            }
+
+            $managers[$k] = $v;
         }
 
         return [
             'size' => $size,
-            'items' => $array
+            'items' => $managers
         ];
     }
 
@@ -571,55 +590,68 @@ class ReportController extends Controller {
      * Виджет «Создано примечаний по менеджерам»
      */
     public function createdNotesForManagers($date) {
-        $pipeline = 3965530; // Клиенты в активной работе
-        $pipelineTwo = 3966385; // Клиенты на юридическое сопровождение
+        $pipeline = 3966382; // Клиенты без активных сделок
 
         $array = [];
         $managers = $this->amo->getUsersByGroup();
-        foreach($managers as $manager) {
-            $array[$manager['id']] = [
-                'id' => $manager['id'],
-                'name' => $manager['name'],
-                'count' => 0,
-                'price' => 0
-            ];
-        }
 
-        $leadsByPipelineOne = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
-        $leadsByPipelineTwo = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipelineTwo}");
-
-        $leadsByPipeline = array_merge($leadsByPipelineOne, $leadsByPipelineTwo);
+//        $leadsByPipelineOne = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
+//        $leadsByPipelineTwo = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipelineTwo}");
+//
+//        $leadsByPipeline = array_merge($leadsByPipelineOne, $leadsByPipelineTwo);
 
         $filter = "&filter[entity_type]=leads&filter[note_type]=common&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
         $leads = $this->amo->getNotesByFilter($filter);
 
-        foreach($array as $k => $v) {
-            foreach($leads as $lead) {
-                $key = array_search($lead['entity_id'], array_column($leadsByPipeline, 'id'));
+        $filter = "&filter[pipeline_id]={$pipeline}";
+        $t = 0;
+        foreach($leads as $l) {
+            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
+            $t++;
+        }
 
-                if(!$key && $lead['responsible_user_id'] == $k) {
-                    $count = 0;
+        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
 
-                    if( isset($array[$k]) ) {
-                        $count = $array[$k]['count'] + 1;
+        foreach($managers as $k => $v) {
+            $i = 0;
+            foreach($v['users'] as $user) {
+                foreach ($leads as $lead) {
+                    $key = array_search($lead['entity_id'], array_column($leadsByPipeline, 'id'));
+
+                    if ($key && $key >= 0 && $lead['responsible_user_id'] == $user['id']) {
+                        $count = 0;
+
+
+                        $count = $v['users'][$i]['count'] + 1;
+
+
+                        $v['users'][$i]['count'] = $count;
                     }
-
-                    $array[$k]['count'] = $count;
                 }
+                $i++;
             }
+
+            $managers[$k] = $v;
         }
 
         $size = [
             'count' => 0
         ];
 
-        foreach($array as $k => $v) {
-            $size['count'] = $size['count'] + $v['count'];
+        foreach($managers as $k => $v) {
+            foreach($v['users'] as $user) {
+                $size['count'] = $size['count'] + $user['count'];
+
+                $v['count'] = $v['count'] + $user['count'];
+                $v['price'] = $v['price'] + $user['price'];
+            }
+
+            $managers[$k] = $v;
         }
 
         return [
             'size' => $size,
-            'items' => $array
+            'items' => $managers
         ];
     }
 

@@ -56,22 +56,31 @@ class AmoCrmController extends Controller {
         return [];
     }
 
-    public function getUsersByGroup() {
+    public function getUsersByGroup($groupId = 0) {
         $allUsers = $this->amoGet('/users');
         $list = $this->getIsSetList($allUsers, 'users');
 
-        $groups = self::getUsersGroups();
+        if($groupId == 0) {
+            $groups = self::getUsersGroups();
 
-        foreach($list as $user) {
-            if(isset($groups[$user['rights']['group_id']])) {
-                $groups[$user['rights']['group_id']]['users'][] = [
-                    'id' => $user['id'],
-                    'name' => $user['name'],
-                    'group' => $user['rights']['group_id'],
-                    'count' => 0,
-                    'price' => 0,
-                    'budget' => 0
-                ];
+            foreach($list as $user) {
+                if(isset($groups[$user['rights']['group_id']])) {
+                    $groups[$user['rights']['group_id']]['users'][] = [
+                        'id' => $user['id'],
+                        'name' => $user['name'],
+                        'group' => $user['rights']['group_id'],
+                        'count' => 0,
+                        'price' => 0,
+                        'budget' => 0
+                    ];
+                }
+            }
+        } else {
+            $groups = [];
+
+            foreach($list as $user) {
+                if($user['rights']['group_id'] == $groupId)
+                    $groups[] = $user;
             }
         }
 

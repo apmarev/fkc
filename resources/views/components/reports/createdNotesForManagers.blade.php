@@ -12,12 +12,24 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($items['items'] as $item)
-            <tr>
-                <td>{{ $item['name'] }}</td>
-                <td>{{ $item['count'] }}</td>
-            </tr>
-        @endforeach
+            @foreach($items['items'] as $item)
+                @if(sizeof($item['users']) > 0)
+                    <tr>
+                        <td>
+                            <b>{{ $item['name'] }}</b>
+                        </td>
+                        <td>
+                            <b>{{ $item['count'] }}</b>
+                        </td>
+                    </tr>
+                    @foreach($item['users'] as $user)
+                        <tr>
+                            <td>{{ $user['name'] }}</td>
+                            <td>{{ $user['count'] }}</td>
+                        </tr>
+                    @endforeach
+                @endif
+            @endforeach
         <tr>
             <td><b>Всего:</b></td>
             <td><b>{{ $items['size']['count'] }}</b></td>
