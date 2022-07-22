@@ -17,8 +17,17 @@
         @foreach($items['items'] as $item)
             @if(sizeof($item['users']) > 0)
                 <tr>
-                    <td colspan="4">
-                        {{ $item['name'] }}
+                    <td>
+                        <b>{{ $item['name'] }}</b>
+                    </td>
+                    <td>
+                        <b>{{ $item['count'] }}</b>
+                    </td>
+                    <td>
+                        <b>{{ $item['price'] }}</b>
+                    </td>
+                    <td>
+                        <b>{{ $item['budget'] }}</b>
                     </td>
                 </tr>
                 @foreach($item['users'] as $user)

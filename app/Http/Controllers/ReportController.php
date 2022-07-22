@@ -62,6 +62,7 @@ class ReportController extends Controller {
 //        $this->createdNotesForManagers();
         $data = $this->getLeadsFromPipelineActiveClients();
 
+        // return $this->dealsByManager($data);
 
         return view('reports.report', [
             'salesAnalysis' => $this->salesAnalysis($data),
@@ -251,9 +252,16 @@ class ReportController extends Controller {
                     'price' => $size['price'] + $user['price'],
                     'budget' => $size['budget'] + $user['budget']
                 ];
+
+                $v['count'] = $v['count'] + $user['count'];
+                $v['price'] = $v['price'] + $user['price'];
+                $v['budget'] = $v['budget'] + $user['budget'];
+
                 if($user['price'] > 0) $user['price'] = number_format($user['price'], 2, ',', ' ') . " ₽";
                 if($user['budget'] > 0) $user['budget'] = number_format($user['budget'], 2, ',', ' ') . " ₽";
             }
+
+            $managers[$k] = $v;
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
@@ -281,7 +289,7 @@ class ReportController extends Controller {
             $i = 0;
             foreach($v['users'] as $user) {
                 foreach ($leads as $lead) {
-                    if ($lead['responsible_user_id'] == $k) {
+                    if ($lead['responsible_user_id'] == $user['id']) {
                         $custom = $this->amo->getIsSetListCustomFields($lead);
 
                         $count = 0;
@@ -319,9 +327,16 @@ class ReportController extends Controller {
                     'price' => $size['price'] + $user['price'],
                     'budget' => $size['budget'] + $user['budget']
                 ];
+
+                $v['count'] = $v['count'] + $user['count'];
+                $v['price'] = $v['price'] + $user['price'];
+                $v['budget'] = $v['budget'] + $user['budget'];
+
                 if($user['price'] > 0) $user['price'] = number_format($user['price'], 2, ',', ' ') . " ₽";
                 if($user['budget'] > 0) $user['budget'] = number_format($user['budget'], 2, ',', ' ') . " ₽";
             }
+
+            $managers[$k] = $v;
         }
 
         $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
