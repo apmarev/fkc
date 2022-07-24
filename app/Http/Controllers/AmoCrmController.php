@@ -42,8 +42,11 @@ class AmoCrmController extends Controller {
     }
 
     public static function getIsSetList($data, string $type) {
-        $data = (array) $data;
-        return $data['_embedded'][$type] ?? [];
+        try {
+            return $data['_embedded'][$type];
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     public static function getIsSetListCustomFields($data): array {
