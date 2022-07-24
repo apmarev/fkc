@@ -9,6 +9,13 @@ class ReportController extends Controller {
 
     protected $amo;
 
+    public function ttt() {
+
+        $query = "/leads?page=1";
+        $res = $this->amo->amoGet($query);
+        return $this->amo->getIsSetList([2134], 'leads');
+    }
+
     public function __construct(AmoCrmController $amo) {
         $this->amo = $amo;
     }
