@@ -592,13 +592,7 @@ class ReportController extends Controller {
     public function createdNotesForManagers($date) {
         $pipeline = 3966382; // Клиенты без активных сделок
 
-        $array = [];
         $managers = $this->amo->getUsersByGroup();
-
-//        $leadsByPipelineOne = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
-//        $leadsByPipelineTwo = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipelineTwo}");
-//
-//        $leadsByPipeline = array_merge($leadsByPipelineOne, $leadsByPipelineTwo);
 
         $filter = "&filter[entity_type]=leads&filter[note_type]=common&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
         $leads = $this->amo->getNotesByFilter($filter);
@@ -620,11 +614,7 @@ class ReportController extends Controller {
 
                     if ($key && $key >= 0 && $lead['responsible_user_id'] == $user['id']) {
                         $count = 0;
-
-
                         $count = $v['users'][$i]['count'] + 1;
-
-
                         $v['users'][$i]['count'] = $count;
                     }
                 }
