@@ -46,8 +46,6 @@ class AmoCrmController extends Controller {
             return $data['_embedded'][$type];
         } catch (\Exception $e) {
             return [];
-        } finally {
-            return [];
         }
 
     }
