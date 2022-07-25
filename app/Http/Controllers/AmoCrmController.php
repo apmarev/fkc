@@ -210,9 +210,7 @@ class AmoCrmController extends Controller {
                 "Content-Type" => "application/json",
             ])
                 ->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}")
-                ->onError(function() {
-                    return [];
-                });
+                ->successful();
         } catch (\Exception $e) {
             return CustomApiException::error(500, $e->getMessage());
         }
