@@ -44,13 +44,9 @@ class AmoCrmController extends Controller {
     }
 
     public static function getIsSetList($data, string $type) {
-        if(Arr::accessible($data) && isset($data['_embedded']) && isset($data['_embedded'][$type])) {
+        if(isset($data['_embedded']) && isset($data['_embedded'][$type])) {
             return $data['_embedded'][$type];
         } else {
-            Telegram::sendMessage([
-                'chat_id' => 228519769,
-                'text' => $type
-            ]);
             return [];
         }
     }
