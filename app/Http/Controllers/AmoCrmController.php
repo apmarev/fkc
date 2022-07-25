@@ -205,12 +205,17 @@ class AmoCrmController extends Controller {
     public function amoGet($path) {
         try {
             $amo = $this->amoGetStatusAccess();
-            return Http::withHeaders([
+            $response = Http::withHeaders([
                 "Authorization" => "Bearer {$amo->access}",
                 "Content-Type" => "application/json",
             ])
-                ->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}")
-                ->successful();
+                ->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}");
+
+            if($response->successful()) {
+                return $response;
+            } else {
+                return [];
+            }
         } catch (\Exception $e) {
             return CustomApiException::error(500, $e->getMessage());
         }
