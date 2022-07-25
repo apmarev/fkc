@@ -42,15 +42,10 @@ class AmoCrmController extends Controller {
     }
 
     public static function getIsSetList($data, string $type) {
-        try {
-            if($data) {
-                if(!$data['_embedded']) return [];
-
-                if(isset($data['_embedded'][$type]))
-                    return $data['_embedded'][$type];
-            } else return [];
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        if($data->has('_embedded')) {
+            return $data['_embedded'][$type];
+        } else {
+            return [];
         }
     }
 

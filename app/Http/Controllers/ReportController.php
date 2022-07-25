@@ -140,40 +140,16 @@ class ReportController extends Controller {
 //            ]);
 
         }
-        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
-        $tasks = $this->amo->getAllListByFilter('tasks', $filter);
-        $filter = "&filter[pipeline_id]=3965530";
-        $t = 0;
-        foreach($tasks as $l) {
-            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
-            $t++;
-        }
 
-        $result = [];
+        $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
+        $tasks2 = $this->getTasksToReportsTwo(3966382, $date['from'], $date['to']);
 
-        for($i=1;;$i++) {
-            $query = "/leads?page={$i}&limit=250{$filter}";
-            $res = $this->amo->amoGet($query);
-
-            exit();
-
-            $result[] = $res;
-        }
-
-        return $result;
-
-//        $leads = $this->amo->getAllListByFilter('leads', "{$filter}");
-//
-//        $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
-////        $tasks2 = $this->getTasksToReportsTwo(3966382, $date['from'], $date['to']);
-//
-//
-//        return view('reports.reportTwo', [
-//            'completedTasks' => $this->completedTasks($date, $tasks),
-//            'createdTasks' => $this->createdTasks($date),
-//            'closedTasksByManagers' => $this->closedTasksByManagers($date, $tasks2),
-//            'createdNotesForManagers' => $this->createdNotesForManagers($date),
-//        ]);
+        return view('reports.reportTwo', [
+            'completedTasks' => $this->completedTasks($date, $tasks),
+            'createdTasks' => $this->createdTasks($date),
+            'closedTasksByManagers' => $this->closedTasksByManagers($date, $tasks2),
+            'createdNotesForManagers' => $this->createdNotesForManagers($date),
+        ]);
     }
 
     protected function getLeadsFromPipelineActiveClients() {
