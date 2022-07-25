@@ -45,7 +45,10 @@ class AmoCrmController extends Controller {
 
     public static function getIsSetList($data, string $type) {
         if(get_class($data) != 'Illuminate\Http\JsonResponse') {
-            return $data['_embedded'][$type];
+            if(isset($data['_embedded']) && isset( $data['_embedded'][$type]))
+                return $data['_embedded'][$type];
+            else
+                return [];
         } else {
             return [];
         }
