@@ -102,7 +102,7 @@ class AmoCrmController extends Controller {
             $res = $this->amoGet($query);
 
 
-            if(Arr::isAssoc((array)$res)) {
+            if(Arr::isAssoc($res)) {
                 $list = self::getIsSetList($res, $type);
             } else {
                 $list = [];
