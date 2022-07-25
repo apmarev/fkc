@@ -44,22 +44,27 @@ class AmoCrmController extends Controller {
     }
 
     public static function getIsSetList($data, string $type) {
-        try {
-            $data = $data->body();
-            $data = json_decode($data, true);
-
-            if(isset($data['_embedded'])) {
-                return $data['_embedded'][$type];
-            } else {
-                return [];
-            }
-        } catch (\Exception $e) {
-            Telegram::sendMessage([
-                'chat_id' => 228519769,
-                'text' => get_class($data)
-            ]);
+        if(get_class($data) != 'Illuminate\Http\JsonResponse') {
+            return $data['_embedded'][$type];
+        } else {
             return [];
         }
+//        try {
+//            $data = $data->body();
+//            $data = json_decode($data, true);
+//
+//            if(isset($data['_embedded'])) {
+//                return $data['_embedded'][$type];
+//            } else {
+//                return [];
+//            }
+//        } catch (\Exception $e) {
+////            Telegram::sendMessage([
+////                'chat_id' => 228519769,
+////                'text' => get_class($data)
+////            ]);
+//            return [];
+//        }
 
     }
 
