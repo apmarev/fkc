@@ -104,7 +104,7 @@ class AmoCrmController extends Controller {
             $query = "/{$type}?page={$i}&limit=250{$filter}";
             $res = $this->amoGet($query);
 
-            if($res->getData('_embedded')) {
+            if(!$res->throw()) {
                 $list = self::getIsSetList($res, $type);
             } else {
                 $list = [];
