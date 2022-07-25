@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class AmoCrmController extends Controller {
 
@@ -46,6 +47,10 @@ class AmoCrmController extends Controller {
         if(Arr::accessible($data) && isset($data['_embedded']) && isset($data['_embedded'][$type])) {
             return $data['_embedded'][$type];
         } else {
+            Telegram::sendMessage([
+                'chat_id' => 228519769,
+                'text' => json_encode($data)
+            ]);
             return [];
         }
     }
