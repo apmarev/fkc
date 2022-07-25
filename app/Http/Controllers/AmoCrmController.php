@@ -104,11 +104,17 @@ class AmoCrmController extends Controller {
             $query = "/{$type}?page={$i}&limit=250{$filter}";
             $res = $this->amoGet($query);
 
-            try {
+            if($res->getData('_embedded')) {
                 $list = self::getIsSetList($res, $type);
-            } catch (\Exception $e) {
+            } else {
                 $list = [];
             }
+
+//            try {
+//                $list = self::getIsSetList($res, $type);
+//            } catch (\Exception $e) {
+//                $list = [];
+//            }
 
             if(sizeof($list) > 0) {
                 $result = array_merge($result, $list);
