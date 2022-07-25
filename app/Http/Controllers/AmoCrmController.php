@@ -212,7 +212,11 @@ class AmoCrmController extends Controller {
                 ->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}");
 
             if($response->successful()) {
-                return $response;
+                if(isset($response['validation-errors'])) {
+                    return [];
+                } else {
+                    return $response;
+                }
             } else {
                 return [];
             }
