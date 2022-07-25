@@ -211,15 +211,7 @@ class AmoCrmController extends Controller {
             ])
                 ->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}")['_embedded'];
 
-            if($response->successful()) {
-                if(isset($response['validation-errors'])) {
-                    return [];
-                } else {
-                    return $response;
-                }
-            } else {
-                return [];
-            }
+            return $response;
         } catch (\Exception $e) {
             return CustomApiException::error(500, $e->getMessage());
         }
