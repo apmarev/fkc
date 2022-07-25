@@ -31,6 +31,17 @@ class ReportController extends Controller {
             $t++;
         }
 
+        $result = [];
+
+        for($i=1;;$i++) {
+            $query = "/'leads'?page={$i}&limit=250{$filter}";
+            $res = $this->amoGet($query);
+
+            $result[] = $result;
+        }
+
+        return $result;
+
         $leads = $this->amo->getAllListByFilter('leads', "{$filter}");
 
         return [
