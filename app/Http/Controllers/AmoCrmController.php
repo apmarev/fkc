@@ -43,7 +43,7 @@ class AmoCrmController extends Controller {
 
     public static function getIsSetList($data, string $type) {
         if($data) {
-            if(empty($data['_embedded'])) return [];
+            if(!$data['_embedded']) return [];
 
             if(isset($data['_embedded'][$type]))
                 return $data['_embedded'][$type];
