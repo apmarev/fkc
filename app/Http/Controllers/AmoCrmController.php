@@ -47,7 +47,7 @@ class AmoCrmController extends Controller {
         $data = $data->body();
         Telegram::sendMessage([
             'chat_id' => 228519769,
-            'text' => $data->get('_total_items')
+            'text' => $data->_total_items
         ]);
 
         try {
