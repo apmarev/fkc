@@ -103,7 +103,13 @@ class AmoCrmController extends Controller {
         for($i=1;;$i++) {
             $query = "/{$type}?page={$i}&limit=250{$filter}";
             $res = $this->amoGet($query);
-            $list = self::getIsSetList($res, $type);
+
+            try {
+                $list = self::getIsSetList($res, $type);
+            } catch (\Exception $e) {
+                $list = [];
+            }
+
             if(sizeof($list) > 0) {
                 $result = array_merge($result, $list);
                 unset($list);
