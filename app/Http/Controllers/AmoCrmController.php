@@ -46,7 +46,7 @@ class AmoCrmController extends Controller {
     public static function getIsSetList($data, string $type) {
 
         try {
-            $data = json_encode(json_decode($data));
+            $data = json_encode(json_decode($data, true));
             if(isset($data['_embedded'])) {
                 return $data['_embedded'][$type];
             } else {
