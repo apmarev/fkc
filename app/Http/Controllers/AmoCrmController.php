@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\CustomApiException;
 use App\Models\Access;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -100,7 +101,7 @@ class AmoCrmController extends Controller {
             $query = "/{$type}?page={$i}&limit=250{$filter}";
             $res = $this->amoGet($query);
 
-            if(isset($res['_embedded'])) {
+            if(Arr::accessible('_embedded')) {
                 $list = self::getIsSetList($res, $type);
             } else {
                 $list = [];
