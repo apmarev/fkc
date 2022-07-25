@@ -20,6 +20,25 @@ class ReportController extends Controller {
         $this->amo = $amo;
     }
 
+    protected function getTasksToReports($pipeline_id, $from, $to) {
+        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$from}&filter[updated_at][to]={$to}";
+        $tasks = $this->amo->getAllListByFilter('tasks', $filter);
+
+        $filter = "&filter[pipeline_id]={$pipeline_id}";
+        $t = 0;
+        foreach($tasks as $l) {
+            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
+            $t++;
+        }
+
+        $leads = $this->amo->getAllListByFilter('leads', "{$filter}");
+
+        return [
+            'leads' => $leads,
+            'tasks' => $tasks
+        ];
+    }
+
     public function getAllReports(Request $request) {
 
         $date = [];
@@ -122,11 +141,13 @@ class ReportController extends Controller {
 
         }
 
+        $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
+        $tasks2 = $this->getTasksToReportsTwo(3966382, $date['from'], $date['to']);
 
         return view('reports.reportTwo', [
-            'completedTasks' => $this->completedTasks($date),
+            'completedTasks' => $this->completedTasks($date, $tasks),
             'createdTasks' => $this->createdTasks($date),
-            'closedTasksByManagers' => $this->closedTasksByManagers($date),
+            'closedTasksByManagers' => $this->closedTasksByManagers($date, $tasks2),
             'createdNotesForManagers' => $this->createdNotesForManagers($date),
         ]);
     }
@@ -421,8 +442,8 @@ class ReportController extends Controller {
     /**
      * Виджет «Выполненные задачи»
      */
-    public function completedTasks($date) {
-        $pipeline = 3965530; // Клиенты в активной работе
+    public function completedTasks($date, $data) {
+        // $pipeline = 3965530; // Клиенты в активной работе
 
         $array = [];
         $managers = $this->amo->getUsersByGroup(395710);
@@ -437,21 +458,21 @@ class ReportController extends Controller {
 
         // $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
 
-        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
-        $leads = $this->amo->getAllListByFilter('tasks', $filter);
-
-        $filter = "&filter[pipeline_id]={$pipeline}";
-        $t = 0;
-        foreach($leads as $l) {
-            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
-            $t++;
-        }
-
-        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
+//        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
+//        $leads = $this->amo->getAllListByFilter('tasks', $filter);
+//
+//        $filter = "&filter[pipeline_id]={$pipeline}";
+//        $t = 0;
+//        foreach($leads as $l) {
+//            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
+//            $t++;
+//        }
+//
+//        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
 
         foreach($array as $k => $v) {
-            foreach($leads as $lead) {
-                if($lead['responsible_user_id'] == $k && array_search($lead['entity_id'], array_column($leadsByPipeline, 'id')) > -1) {
+            foreach($data['tasks'] as $lead) {
+                if($lead['responsible_user_id'] == $k && array_search($lead['entity_id'], array_column($data['leads'], 'id')) > -1) {
 
                     $count = 0;
 
@@ -533,7 +554,7 @@ class ReportController extends Controller {
     /**
      * Виджет «Закрыто задач по менеджерам»
      */
-    public function closedTasksByManagers($date) {
+    public function closedTasksByManagers($date, $data) {
         $pipeline = 3966382; // Клиенты без активных сделок
 
         $array = [];
@@ -541,23 +562,23 @@ class ReportController extends Controller {
 
         // $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
 
-        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
-        $leads = $this->amo->getAllListByFilter('tasks', $filter);
-
-        $filter = "&filter[pipeline_id]={$pipeline}";
-        $t = 0;
-        foreach($leads as $l) {
-            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
-            $t++;
-        }
-
-        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
+//        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
+//        $leads = $this->amo->getAllListByFilter('tasks', $filter);
+//
+//        $filter = "&filter[pipeline_id]={$pipeline}";
+//        $t = 0;
+//        foreach($leads as $l) {
+//            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
+//            $t++;
+//        }
+//
+//        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
 
         foreach($managers as $k => $v) {
             $i = 0;
             foreach($v['users'] as $user) {
-                foreach ($leads as $lead) {
-                    if ($lead['responsible_user_id'] == $user['id'] && array_search($lead['entity_id'], array_column($leadsByPipeline, 'id')) > -1) {
+                foreach ($data['tasks'] as $lead) {
+                    if ($lead['responsible_user_id'] == $user['id'] && array_search($lead['entity_id'], array_column($data['leads'], 'id')) > -1) {
 
                         $count = 0;
 
