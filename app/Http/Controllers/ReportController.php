@@ -142,7 +142,9 @@ class ReportController extends Controller {
         }
 
         $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
-        $tasks2 = $this->getTasksToReportsTwo(3966382, $date['from'], $date['to']);
+//        $tasks2 = $this->getTasksToReportsTwo(3966382, $date['from'], $date['to']);
+
+        return $tasks;
 
         return view('reports.reportTwo', [
             'completedTasks' => $this->completedTasks($date, $tasks),
