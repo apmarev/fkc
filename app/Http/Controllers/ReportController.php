@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\AmoCrmController;
+use App\Models\Access;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller {
@@ -11,9 +12,8 @@ class ReportController extends Controller {
 
     public function ttt() {
 
-        $query = "/leads?page=1";
-        $res = $this->amo->amoGet($query);
-        return $this->amo->getIsSetList([2134], 'leads');
+        return Access::find(1);
+        return $this->getTasksToReports(3965530, 1656633601, time());
     }
 
     public function __construct(AmoCrmController $amo) {
@@ -22,8 +22,9 @@ class ReportController extends Controller {
 
     protected function getTasksToReports($pipeline_id, $from, $to) {
         $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$from}&filter[updated_at][to]={$to}";
-        $tasks = $this->amo->getAllListByFilter('tasks', $filter);
 
+        $tasks = $this->amo->getAllListByFilter('tasks', $filter);
+        return $tasks;
         $filter = "&filter[pipeline_id]={$pipeline_id}";
         $t = 0;
         foreach($tasks as $l) {
@@ -74,6 +75,8 @@ class ReportController extends Controller {
                     ];
                 }
             }
+
+            if($date['from'] > time()) $date['from'] = time();
 //
 //            Telegram::sendMessage([
 //                'chat_id' => 228519769,
