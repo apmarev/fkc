@@ -47,7 +47,7 @@ class AmoCrmController extends Controller {
         $data = $data->body();
         Telegram::sendMessage([
             'chat_id' => 228519769,
-            'text' => json_encode($data->_embedded)
+            'text' => json_encode($data['_embedded'])
         ]);
 
         try {
