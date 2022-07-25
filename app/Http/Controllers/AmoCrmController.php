@@ -50,7 +50,7 @@ class AmoCrmController extends Controller {
                     return $data['_embedded'][$type];
             } else return [];
         } catch (\Exception $e) {
-            throw new \Error('');
+            throw new \Exception($e->getMessage());
         }
     }
 
