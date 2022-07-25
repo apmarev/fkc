@@ -43,7 +43,11 @@ class AmoCrmController extends Controller {
     }
 
     public static function getIsSetList($data, string $type) {
-        return $data['_embedded'][$type] ?? [];
+        if(Arr::accessible($data)) {
+            return $data['_embedded'][$type] ?? [];
+        } else {
+            return [];
+        }
     }
 
     public static function getIsSetListCustomFields($data): array {
@@ -100,13 +104,7 @@ class AmoCrmController extends Controller {
         for($i=1;;$i++) {
             $query = "/{$type}?page={$i}&limit=250{$filter}";
             $res = $this->amoGet($query);
-
-
-            if(Arr::accessible($res)) {
-                $list = self::getIsSetList($res, $type);
-            } else {
-                $list = [];
-            }
+            $list = self::getIsSetList($res, $type);
 
 //            try {
 //                $list = self::getIsSetList($res, $type);
