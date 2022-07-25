@@ -44,14 +44,11 @@ class AmoCrmController extends Controller {
     }
 
     public static function getIsSetList($data, string $type) {
-        if(is_object($data)) {
-            if($data->hasKey('_embedded'))
-                return $data['_embedded'][$type];
-            else
-                return [];
-        } else {
+
+        if($data->hasKey('_embedded'))
+            return $data['_embedded'][$type];
+        else
             return [];
-        }
     }
 
     public static function getIsSetListCustomFields($data): array {
@@ -212,16 +209,13 @@ class AmoCrmController extends Controller {
                 "Authorization" => "Bearer {$amo->access}",
                 "Content-Type" => "application/json",
             ])
-                ->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}");
+                ->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}")['_embedded'];
 
             if($response->successful()) {
                 if(isset($response['validation-errors'])) {
                     return [];
                 } else {
-                    if(isset($response->_embedded) || isset($response['_embedded']))
-                        return $response;
-                    else
-                        return [];
+                    return $response;
                 }
             } else {
                 return [];
