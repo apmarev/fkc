@@ -314,24 +314,19 @@ class AmoCrmController extends Controller {
     }
 
     public function amoGetStatusAccess() {
-        if($access = Access::find(1)) {
-            if(time() >= $access['expires'])
-                return $this->newAccessTokenByRefreshToken($access);
-            else
-                return $access;
-        } else {
-            return CustomApiException::error(404);
+        try {
+            if($access = Access::find(1)) {
+                if(time() >= $access['expires'])
+                    return $this->newAccessTokenByRefreshToken($access);
+                else
+                    return $access;
+            } else {
+                throw new \ErrorException('');
+            }
+        } catch (\Exception $e) {
+            throw new \ErrorException('');
         }
-//        try {
-//            $access = $this->__access->getAccessByID(1);
-//            if(time() >= $access->expires) {
-//                return $this->newAccessTokenByRefreshToken($access);
-//            } else {
-//                return $access;
-//            }
-//        } catch (\Exception $e) {
-//            return CustomApiException::error(404);
-//        }
+
     }
 
     public function newAccessTokenByRefreshToken($service) {
