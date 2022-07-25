@@ -43,6 +43,23 @@ class AmoCrmController extends Controller {
         ]);
     }
 
+    public function getManyLeads($filter, $ids) {
+        $arr = array_chunk($ids, 100);
+        $leads = [];
+        foreach($arr as $a) {
+
+            $i=0;
+            foreach($a as $id) {
+                $filter .= "&filter[id][{$i}]={$id}";
+                $i++;
+            }
+            $items = $this->getAllListByFilter('leads', "{$filter}");
+            $leads = array_merge($leads, $items);
+        }
+
+        return $leads;
+    }
+
     public static function getIsSetList($data, string $type) {
         if(get_class($data) != 'Illuminate\Http\JsonResponse') {
             if(isset($data['_embedded']) && isset( $data['_embedded'][$type]))
@@ -50,8 +67,6 @@ class AmoCrmController extends Controller {
             else
                 return [];
         } else {
-            echo json_encode($data);
-            exit();
 //            Telegram::sendMessage([
 //                'chat_id' => 228519769,
 //                'text' => json_encode($data)

@@ -24,14 +24,12 @@ class ReportController extends Controller {
 
         $tasks = $this->amo->getAllListByFilter('tasks', $filter);
 
-        $filter = "&filter[pipeline_id]={$pipeline_id}";
-        $t = 0;
-        foreach($tasks as $l) {
-            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
-            $t++;
-        }
+        $ids = [];
+        foreach($tasks as $l)
+            $ids[] = $l['entity_id'];
 
-        $leads = $this->amo->getAllListByFilter('leads', "{$filter}");
+        $filter = "&filter[pipeline_id]={$pipeline_id}";
+        $leads = $this->amo->getManyLeads($filter, $ids);
 
         return [
             'leads' => $leads,
@@ -613,14 +611,12 @@ class ReportController extends Controller {
         $filter = "&filter[entity_type]=leads&filter[note_type]=common&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
         $leads = $this->amo->getNotesByFilter($filter);
 
-        $filter = "&filter[pipeline_id]={$pipeline}";
-        $t = 0;
-        foreach($leads as $l) {
-            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
-            $t++;
-        }
+        $ids = [];
+        foreach($leads as $l)
+            $ids[] = $l['entity_id'];
 
-        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
+        $filter = "&filter[pipeline_id]={$pipeline}";
+        $leadsByPipeline = $this->amo->getManyLeads($filter, $ids);
 
         foreach($managers as $k => $v) {
             $i = 0;
