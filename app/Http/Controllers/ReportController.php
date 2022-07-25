@@ -24,7 +24,7 @@ class ReportController extends Controller {
         $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$from}&filter[updated_at][to]={$to}";
 
         $tasks = $this->amo->getAllListByFilter('tasks', $filter);
-        return $tasks;
+
         $filter = "&filter[pipeline_id]={$pipeline_id}";
         $t = 0;
         foreach($tasks as $l) {
