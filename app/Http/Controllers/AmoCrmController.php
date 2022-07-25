@@ -102,7 +102,7 @@ class AmoCrmController extends Controller {
             $res = $this->amoGet($query);
 
 
-            if(is_array($res) && Arr::has($res, '_embedded')) {
+            if(Arr::hasAny($res, '_embedded')) {
                 $list = self::getIsSetList($res, $type);
             } else {
                 $list = [];
