@@ -212,7 +212,11 @@ class AmoCrmController extends Controller {
             return Http::withHeaders([
                 "Authorization" => "Bearer {$amo->access}",
                 "Content-Type" => "application/json",
-            ])->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}");
+            ])
+                ->get("https://" . config('app.services.amo.subdomain') . ".amocrm.ru/api/v4{$path}")
+                ->onError(function() {
+                    return [];
+                });
         } catch (\Exception $e) {
             return CustomApiException::error(500, $e->getMessage());
         }
