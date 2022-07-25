@@ -43,8 +43,8 @@ class AmoCrmController extends Controller {
     }
 
     public static function getIsSetList($data, string $type) {
-        if(Arr::accessible($data)) {
-            return $data['_embedded'][$type] ?? [];
+        if(Arr::accessible($data) && isset($data['_embedded']) && isset($data['_embedded'][$type])) {
+            return $data['_embedded'][$type];
         } else {
             return [];
         }
@@ -105,12 +105,6 @@ class AmoCrmController extends Controller {
             $query = "/{$type}?page={$i}&limit=250{$filter}";
             $res = $this->amoGet($query);
             $list = self::getIsSetList($res, $type);
-
-//            try {
-//                $list = self::getIsSetList($res, $type);
-//            } catch (\Exception $e) {
-//                $list = [];
-//            }
 
             if(sizeof($list) > 0) {
                 $result = array_merge($result, $list);
