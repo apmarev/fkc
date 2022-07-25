@@ -215,7 +215,7 @@ class AmoCrmController extends Controller {
                 if(isset($response['validation-errors'])) {
                     return [];
                 } else {
-                    return $response;
+                    return $response->body();
                 }
             } else {
                 return [];
