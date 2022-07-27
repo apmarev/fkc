@@ -511,6 +511,15 @@ class ReportController extends Controller {
         $filter = "&filter[entity_type]=leads&filter[created_at][from]={$date['from']}&filter[created_at][to]={$date['to']}";
         $leads = $this->amo->getAllListByFilter('tasks', $filter);
 
+        $arr = [];
+
+        foreach($leads as $l) {
+            if($l['created_at'] >= $date['from'] && $l['created_at'] <= $date['to'])
+                $arr[] = $l;
+        }
+
+        $leads = $arr;
+
 
         foreach($array as $k => $v) {
             foreach($leads as $lead) {
