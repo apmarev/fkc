@@ -12,7 +12,7 @@ class ReportController extends Controller {
 
     public function ttt() {
 
-        return $this->amo->amoGetStatusAccess();
+        return $this->createdTasks(['from' => 1658707201, 'to' => time()]);
     }
 
     public function __construct(AmoCrmController $amo) {
@@ -493,6 +493,7 @@ class ReportController extends Controller {
 
         $array = [];
         $managers = $this->amo->getUsersByGroup(395710);
+
         foreach($managers as $manager) {
             $array[$manager['id']] = [
                 'id' => $manager['id'],
@@ -545,20 +546,6 @@ class ReportController extends Controller {
 
         $array = [];
         $managers = $this->amo->getUsersByGroup();
-
-        // $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
-
-//        $filter = "&filter[is_completed]=1&filter[entity_type]=leads&filter[updated_at][from]={$date['from']}&filter[updated_at][to]={$date['to']}";
-//        $leads = $this->amo->getAllListByFilter('tasks', $filter);
-//
-//        $filter = "&filter[pipeline_id]={$pipeline}";
-//        $t = 0;
-//        foreach($leads as $l) {
-//            $filter .= "&filter[id][{$t}]={$l['entity_id']}";
-//            $t++;
-//        }
-//
-//        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "{$filter}");
 
         foreach($managers as $k => $v) {
             $i = 0;
