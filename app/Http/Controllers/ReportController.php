@@ -12,10 +12,10 @@ class ReportController extends Controller {
 
     public function ttt() {
 
-        $filter = "&filter[entity_type]=leads&filter[created_at][from]=1658707201&filter[created_at][to]=1658958570";
-        $leads = $this->amo->getAllListByFilter('tasks', $filter);
-
-        return sizeof($leads);
+        return $this->createdTasks([
+            'from' => 1658707201,
+            'to' => time()
+        ]);
     }
 
     public function __construct(AmoCrmController $amo) {
