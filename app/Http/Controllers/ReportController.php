@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\AmoCrmController;
 use App\Models\Access;
 use Illuminate\Http\Request;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class ReportController extends Controller {
 
@@ -137,10 +138,10 @@ class ReportController extends Controller {
                 }
             }
 //
-//            Telegram::sendMessage([
-//                'chat_id' => 228519769,
-//                'text' => json_encode($date)
-//            ]);
+            Telegram::sendMessage([
+                'chat_id' => 228519769,
+                'text' => json_encode($date)
+            ]);
 
         }
 
