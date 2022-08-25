@@ -106,11 +106,6 @@ class ReportController extends Controller {
 
         $date = [];
 
-        Telegram::sendMessage([
-            'chat_id' => 228519769,
-            'text' => json_encode($request->all())
-        ]);
-
         if($request->has('period')) {
             $period = $request->input('period');
             if($period == 'custom') {
@@ -145,6 +140,11 @@ class ReportController extends Controller {
 //
 
 
+        } else {
+            $date = [
+                'from' => strtotime(date('d.m.Y') . "00.00.01"),
+                'to' => time()
+            ];
         }
 
         $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
