@@ -106,6 +106,11 @@ class ReportController extends Controller {
 
         $date = [];
 
+        Telegram::sendMessage([
+            'chat_id' => 228519769,
+            'text' => json_encode($request->all())
+        ]);
+
         if($request->has('period')) {
             $period = $request->input('period');
             if($period == 'custom') {
@@ -138,10 +143,7 @@ class ReportController extends Controller {
                 }
             }
 //
-            Telegram::sendMessage([
-                'chat_id' => 228519769,
-                'text' => json_encode($date)
-            ]);
+
 
         }
 
