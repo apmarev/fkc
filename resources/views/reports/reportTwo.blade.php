@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-6">
-                <x-reports.completedTasks :items="$completedTasks" />
+                <x-reports.createdLeadsByManagers :items="$createdLeadsByManagers" />
             </div>
             <div class="col-6">
                 <x-reports.createdTasks :items="$createdTasks" />

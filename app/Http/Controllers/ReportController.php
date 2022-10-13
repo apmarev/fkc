@@ -147,11 +147,10 @@ class ReportController extends Controller {
             ];
         }
 
-        $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
         $tasks2 = $this->getTasksToReports(3966382, $date['from'], $date['to']);
 
         return view('reports.reportTwo', [
-            'completedTasks' => $this->completedTasks($date, $tasks),
+            'createdLeadsByManagers' => $this->createdLeadsByManagers($date),
             'createdTasks' => $this->createdTasks($date),
             'closedTasksByManagers' => $this->closedTasksByManagers($date, $tasks2),
             'createdNotesForManagers' => $this->createdNotesForManagers($date),
@@ -161,6 +160,8 @@ class ReportController extends Controller {
     public function getThreeReports(Request $request) {
 
         $date = [];
+
+        $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
 
         if($request->has('period')) {
             $period = $request->input('period');
@@ -204,7 +205,7 @@ class ReportController extends Controller {
         }
 
         return view('reports.reportThree', [
-            'createdLeadsByManagers' => $this->createdLeadsByManagers($date),
+            'completedTasks' => $this->completedTasks($date, $tasks),
         ]);
     }
 
