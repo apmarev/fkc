@@ -2,7 +2,7 @@
     <div class="cell-wrapper">
         <div class="cell-wrapper__caption">
             <p class="caps">Созданные задачи</p>
-            <p class="caps">Клиенты в активной работе</p>
+            <p class="caps"></p>
         </div>
 
         <table class="table">

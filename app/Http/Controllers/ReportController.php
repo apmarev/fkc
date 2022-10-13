@@ -158,6 +158,56 @@ class ReportController extends Controller {
         ]);
     }
 
+    public function getThreeReports(Request $request) {
+
+        $date = [];
+
+        if($request->has('period')) {
+            $period = $request->input('period');
+            if($period == 'custom') {
+                $date = [
+                    'from' => strtotime($request->input('date_from')),
+                    'to' => strtotime($request->input('date_to'))
+                ];
+            } else {
+                if($period == 'week') {
+                    $date = [
+                        'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00.00.01"),
+                        'to' => time(),
+                    ];
+                } else if($period == 'day') {
+                    $date = [
+                        'from' => strtotime(date('d.m.Y') . "00.00.01"),
+                        'to' => time()
+                    ];
+                } else if($period == 'yesterday') {
+                    $date = [
+                        'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
+                        'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
+                    ];
+                } else if($period == 'month') {
+                    $date = [
+                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00.00.01"),
+                        'to' => time(),
+                        'test' => date("d.m.Y", strtotime('first day of this month'))
+                    ];
+                }
+            }
+//
+
+
+        } else {
+            $date = [
+                'from' => strtotime(date('d.m.Y') . "00.00.01"),
+                'to' => time()
+            ];
+        }
+
+        return view('reports.reportThree', [
+            'createdLeadsByManagers' => $this->createdLeadsByManagers($date),
+        ]);
+    }
+
     protected function getLeadsFromPipelineActiveClients() {
         $pipeline = 3965530; // Клиенты в активной работе
         $statuses = $this->amo->getStatusesByPipeline($pipeline);
@@ -306,6 +356,111 @@ class ReportController extends Controller {
             'items' => $managers
         ];
     }
+
+
+    /**
+     * Виджет «Создано сделок по менеджерам»
+     */
+    public function createdLeadsByManagers($date = false) {
+
+        if(!$date) {
+            $date = [
+                'from' => 1664582400,
+                'to' => time()
+            ];
+        }
+
+        $managers = $this->amo->getUsersByGroup();
+
+        $array = [];
+        $managers_groups_ids = [
+            406465, // Отдел Боровковой Тани
+            406468, // Отдел Кашкаровой Наташи
+            406471, // Отдел Губина Михаила
+            406474, // Отдел Есина Паши
+            406477, // Отдел Долговой Алины
+            406480, // Отдел Савиной Крис
+            406483, // Отдел Шпортало Анастасии
+            406486, // Отдел Тришина Михаила
+            406489 // Отдел Лосевой Юлии
+        ];
+
+        $managers_groups = [];
+        foreach($managers_groups_ids as $group_id) $managers_groups = array_merge($managers_groups, $this->amo->getUsersByGroup($group_id));
+
+        $filter = "&filter[created_at][from]={$date['from']}&filter[created_at][to]={$date['to']}";
+        $i = 0;
+        foreach($managers_groups as $manager) {
+            $filter .= "&filter[responsible_user_id][{$i}]={$manager['id']}";
+            $i++;
+        }
+
+        $leads = $this->amo->getAllListByFilter('leads', $filter);
+
+        foreach($managers as $k => $v) {
+            $i = 0;
+            foreach($v['users'] as $user) {
+                foreach ($leads as $lead) {
+                    if ($lead['responsible_user_id'] == $user['id']) {
+                        $custom = $this->amo->getIsSetListCustomFields($lead);
+
+                        $count = 0;
+                        $price = 0;
+
+                        foreach ($custom as $c)
+                            if ($c['field_id'] == 915455) $price = $c['values'][0]['value'];
+
+
+                        $price = $price + $v['users'][$i]['price'];
+                        $count = $v['users'][$i]['count'] + 1;
+
+
+                        $v['users'][$i]['count'] = $count;
+                        $v['users'][$i]['price'] = $price;
+                        $v['users'][$i]['budget'] = $v['users'][$i]['budget'] + $lead['price'];
+                    }
+                }
+                $i++;
+            }
+
+            $managers[$k] = $v;
+        }
+
+        $size = [
+            'count' => 0,
+            'price' => 0,
+            'budget' => 0
+        ];
+
+        foreach($managers as $k => $v) {
+            foreach($v['users'] as $user) {
+                $size = [
+                    'count' => $size['count'] + $user['count'],
+                    'price' => $size['price'] + $user['price'],
+                    'budget' => $size['budget'] + $user['budget']
+                ];
+
+                $v['count'] = $v['count'] + $user['count'];
+                $v['price'] = $v['price'] + $user['price'];
+                $v['budget'] = $v['budget'] + $user['budget'];
+
+                if($user['price'] > 0) $user['price'] = number_format($user['price'], 2, ',', ' ') . " ₽";
+                if($user['budget'] > 0) $user['budget'] = number_format($user['budget'], 2, ',', ' ') . " ₽";
+            }
+
+            $managers[$k] = $v;
+        }
+
+        $size['price'] = number_format($size['price'], 2, ',', ' ') . " ₽";
+        $size['budget'] = number_format($size['budget'], 2, ',', ' ') . " ₽";
+
+        return [
+            'size' => $size,
+            'items' => $managers
+        ];
+    }
+
+
 
     /**
      * Виджет «Продажи по менеджерам»
@@ -495,10 +650,27 @@ class ReportController extends Controller {
      * Виджет «Созданные задачи»
      */
     public function createdTasks($date) {
+
         $pipeline = 3965530; // Клиенты в активной работе
 
         $array = [];
-        $managers = $this->amo->getUsersByGroup(395710);
+
+        $analysts = $this->amo->getUsersByGroup(395710);
+
+        $managers_groups_ids = [
+            406465, // Отдел Боровковой Тани
+            406468, // Отдел Кашкаровой Наташи
+            406471, // Отдел Губина Михаила
+            406474, // Отдел Есина Паши
+            406477, // Отдел Долговой Алины
+            406480, // Отдел Савиной Крис
+            406483, // Отдел Шпортало Анастасии
+            406486, // Отдел Тришина Михаила
+            406489 // Отдел Лосевой Юлии
+        ];
+
+        $managers = [];
+        foreach($managers_groups_ids as $group_id) $managers = array_merge($managers, $this->amo->getUsersByGroup($group_id));
 
         foreach($managers as $manager) {
             $array[$manager['id']] = [
@@ -509,35 +681,60 @@ class ReportController extends Controller {
             ];
         }
 
-        $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
+        // $leadsByPipeline = $this->amo->getAllListByFilter('leads', "&filter[pipeline_id]={$pipeline}");
 
-        $filter = "&filter[entity_type]=leads&filter[created_at][from]={$date['from']}&filter[created_at][to]={$date['to']}";
-        $leads = $this->amo->getAllListByFilter('tasks', $filter);
+        $filter = "&filter[created_at][from]={$date['from']}&filter[created_at][to]={$date['to']}";
+
+        $i = 0;
+        foreach($analysts as $analyst) {
+            $filter .= "&filter[responsible_user_id][{$i}]={$analyst['id']}";
+            $i++;
+        }
+
+        $tasks = $this->amo->getAllListByFilter('tasks', $filter);
 
         $arr = [];
 
-        foreach($leads as $l) {
+        foreach($tasks as $l) {
             if($l['created_at'] >= $date['from'] && $l['created_at'] <= $date['to'])
                 $arr[] = $l;
         }
 
-        $leads = $arr;
-
+        $tasks = $arr;
 
         foreach($array as $k => $v) {
-            foreach($leads as $lead) {
-                if($lead['responsible_user_id'] == $k && array_search($lead['entity_id'], array_column($leadsByPipeline, 'id')) > -1) {
-
+            foreach($tasks as $task) {
+                // $searchResponsible = array_search($task['responsible_user_id'], array_column($analysts, 'id'));
+                if(
+//                    $searchResponsible && $searchResponsible > -1 &&
+                    $task['created_by'] == $k
+//                    && array_search($task['entity_id'], array_column($leadsByPipeline, 'id')) > -1
+                ) {
                     $count = 0;
 
-                    if( isset($array[$k]) ) {
-                        $count = $array[$k]['count'] + 1;
-                    }
+                    if(isset($array[$k])) $count = $array[$k]['count'] + 1;
 
                     $array[$k]['count'] = $count;
                 }
             }
         }
+
+//        foreach($array as $k => $v) {
+//            foreach($tasks as $task) {
+//
+//
+//                if($lead['responsible_user_id'] == $k && array_search($lead['entity_id'], array_column($leadsByPipeline, 'id')) > -1) {
+//
+//                    $count = 0;
+//
+//                    if( isset($array[$k]) ) {
+//                        $count = $array[$k]['count'] + 1;
+//                    }
+//
+//                    $array[$k]['count'] = $count;
+//                }
+//            }
+//        }
 
         $size = [
             'count' => 0

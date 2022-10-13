@@ -454,6 +454,6 @@ class AmoCrmController extends Controller {
     }
 
     public function test() {
-        return $this->amoGetStatusAccess();
+        return Access::find(1);
     }
 }
