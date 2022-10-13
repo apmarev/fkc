@@ -362,14 +362,7 @@ class ReportController extends Controller {
     /**
      * Виджет «Создано сделок по менеджерам»
      */
-    public function createdLeadsByManagers($date = false) {
-
-        if(!$date) {
-            $date = [
-                'from' => 1664582400,
-                'to' => time()
-            ];
-        }
+    public function createdLeadsByManagers($date) {
 
         $managers = $this->amo->getUsersByGroup();
 
