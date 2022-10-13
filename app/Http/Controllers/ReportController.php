@@ -161,8 +161,6 @@ class ReportController extends Controller {
 
         $date = [];
 
-        $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
-
         if($request->has('period')) {
             $period = $request->input('period');
             if($period == 'custom') {
@@ -203,6 +201,8 @@ class ReportController extends Controller {
                 'to' => time()
             ];
         }
+
+        $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
 
         return view('reports.reportThree', [
             'completedTasks' => $this->completedTasks($date, $tasks),
