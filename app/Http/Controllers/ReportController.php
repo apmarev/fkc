@@ -137,9 +137,6 @@ class ReportController extends Controller {
                     ];
                 }
             }
-//
-
-
         } else {
             $date = [
                 'from' => strtotime(date('d.m.Y') . "00.00.01"),
@@ -364,9 +361,9 @@ class ReportController extends Controller {
      */
     public function createdLeadsByManagers($date) {
 
+
         $managers = $this->amo->getUsersByGroup();
 
-        $array = [];
         $managers_groups_ids = [
             406465, // Отдел Боровковой Тани
             406468, // Отдел Кашкаровой Наташи
