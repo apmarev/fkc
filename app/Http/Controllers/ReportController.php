@@ -41,9 +41,12 @@ class ReportController extends Controller {
         ];
     }
 
-    public function getAllReports(Request $request) {
+    protected static function getFilterDate(Request $request) {
 
-        $date = [];
+        $date = [
+            'from' => strtotime(date('d.m.Y') . "00.00.01"),
+            'to' => time()
+        ];
 
         if($request->has('period')) {
             $period = $request->input('period');
@@ -76,15 +79,55 @@ class ReportController extends Controller {
                     ];
                 }
             }
-
-            if($date['from'] > time()) $date['from'] = time();
-//
-//            Telegram::sendMessage([
-//                'chat_id' => 228519769,
-//                'text' => json_encode($date)
-//            ]);
-
         }
+
+        return $date;
+    }
+
+    public function getAllReports(Request $request) {
+
+        $date = self::getFilterDate($request);
+
+//        if($request->has('period')) {
+//            $period = $request->input('period');
+//            if($period == 'custom') {
+//                $date = [
+//                    'from' => strtotime($request->input('date_from')),
+//                    'to' => strtotime($request->input('date_to'))
+//                ];
+//            } else {
+//                if($period == 'week') {
+//                    $date = [
+//                        'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00.00.01"),
+//                        'to' => time(),
+//                    ];
+//                } else if($period == 'day') {
+//                    $date = [
+//                        'from' => strtotime(date('d.m.Y') . "00.00.01"),
+//                        'to' => time()
+//                    ];
+//                } else if($period == 'yesterday') {
+//                    $date = [
+//                        'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
+//                        'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
+//                    ];
+//                } else if($period == 'month') {
+//                    $date = [
+//                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00.00.01"),
+//                        'to' => time(),
+//                        'test' => date("d.m.Y", strtotime('first day of this month'))
+//                    ];
+//                }
+//            }
+//
+//            if($date['from'] > time()) $date['from'] = time();
+////
+////            Telegram::sendMessage([
+////                'chat_id' => 228519769,
+////                'text' => json_encode($date)
+////            ]);
+//
+//        }
 
 //        $this->completedTasks();
 //        $this->createdTasks();
@@ -104,45 +147,9 @@ class ReportController extends Controller {
 
     public function getTwoReports(Request $request) {
 
-        $date = [];
+        return $request;
 
-        if($request->has('period')) {
-            $period = $request->input('period');
-            if($period == 'custom') {
-                $date = [
-                    'from' => strtotime($request->input('date_from')),
-                    'to' => strtotime($request->input('date_to'))
-                ];
-            } else {
-                if($period == 'week') {
-                    $date = [
-                        'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00.00.01"),
-                        'to' => time(),
-                    ];
-                } else if($period == 'day') {
-                    $date = [
-                        'from' => strtotime(date('d.m.Y') . "00.00.01"),
-                        'to' => time()
-                    ];
-                } else if($period == 'yesterday') {
-                    $date = [
-                        'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
-                        'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
-                    ];
-                } else if($period == 'month') {
-                    $date = [
-                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00.00.01"),
-                        'to' => time(),
-                        'test' => date("d.m.Y", strtotime('first day of this month'))
-                    ];
-                }
-            }
-        } else {
-            $date = [
-                'from' => strtotime(date('d.m.Y') . "00.00.01"),
-                'to' => time()
-            ];
-        }
+        $date = self::getFilterDate($request);
 
         $tasks2 = $this->getTasksToReports(3966382, $date['from'], $date['to']);
 
@@ -642,8 +649,6 @@ class ReportController extends Controller {
      */
     public function createdTasks($date) {
 
-        $pipeline = 3965530; // Клиенты в активной работе
-
         $array = [];
 
         $analysts = $this->amo->getUsersByGroup(395710);
@@ -695,37 +700,13 @@ class ReportController extends Controller {
 
         foreach($array as $k => $v) {
             foreach($tasks as $task) {
-                // $searchResponsible = array_search($task['responsible_user_id'], array_column($analysts, 'id'));
-                if(
-//                    $searchResponsible && $searchResponsible > -1 &&
-                    $task['created_by'] == $k
-//                    && array_search($task['entity_id'], array_column($leadsByPipeline, 'id')) > -1
-                ) {
+                if($task['created_by'] == $k) {
                     $count = 0;
-
                     if(isset($array[$k])) $count = $array[$k]['count'] + 1;
-
                     $array[$k]['count'] = $count;
                 }
             }
         }
-
-//        foreach($array as $k => $v) {
-//            foreach($tasks as $task) {
-//
-//
-//                if($lead['responsible_user_id'] == $k && array_search($lead['entity_id'], array_column($leadsByPipeline, 'id')) > -1) {
-//
-//                    $count = 0;
-//
-//                    if( isset($array[$k]) ) {
-//                        $count = $array[$k]['count'] + 1;
-//                    }
-//
-//                    $array[$k]['count'] = $count;
-//                }
-//            }
-//        }
 
         $size = [
             'count' => 0
