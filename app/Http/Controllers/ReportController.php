@@ -602,7 +602,13 @@ class ReportController extends Controller {
     /**
      * Виджет «Созданные задачи»
      */
-    public function createdTasks($date) {
+    public function createdTasks($date = false) {
+
+        if(!$date)
+            $date = [
+                'from' => 1664636354,
+                'to' => time()
+            ];
 
         $array = [];
 
@@ -652,6 +658,46 @@ class ReportController extends Controller {
         }
 
         $tasks = $arr;
+
+        $managers = $this->amo->getUsersByGroup();
+
+        foreach($managers as $k => $v) {
+            $i = 0;
+            foreach($v['users'] as $user) {
+                foreach ($tasks as $lead) {
+                    if ($lead['created_by'] == $user['id']) {
+                        $count = 0;
+                        $count = $v['users'][$i]['count'] + 1;
+                        $v['users'][$i]['count'] = $count;
+                    }
+                }
+                $i++;
+            }
+
+            $managers[$k] = $v;
+        }
+
+        $size = [
+            'count' => 0
+        ];
+
+        foreach($managers as $k => $v) {
+            foreach($v['users'] as $user) {
+                $size['count'] = $size['count'] + $user['count'];
+
+                $v['count'] = $v['count'] + $user['count'];
+                $v['price'] = $v['price'] + $user['price'];
+            }
+
+            $managers[$k] = $v;
+        }
+
+        return [
+            'size' => $size,
+            'items' => $managers
+        ];
+
+
 
         foreach($array as $k => $v) {
             foreach($tasks as $task) {
