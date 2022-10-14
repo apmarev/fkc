@@ -41,7 +41,7 @@ class ReportController extends Controller {
         ];
     }
 
-    protected static function getFilterDate(Request $request) {
+    protected static function getFilterDate(Request $request): array {
 
         $date = [
             'from' => strtotime(date('d.m.Y') . "00.00.01"),
@@ -147,8 +147,6 @@ class ReportController extends Controller {
 
     public function getTwoReports(Request $request) {
 
-        return $request;
-
         $date = self::getFilterDate($request);
 
         $tasks2 = $this->getTasksToReports(3966382, $date['from'], $date['to']);
@@ -162,50 +160,7 @@ class ReportController extends Controller {
     }
 
     public function getThreeReports(Request $request) {
-
-        $date = [];
-
-        if($request->has('period')) {
-            $period = $request->input('period');
-            if($period == 'custom') {
-                $date = [
-                    'from' => strtotime($request->input('date_from')),
-                    'to' => strtotime($request->input('date_to'))
-                ];
-            } else {
-                if($period == 'week') {
-                    $date = [
-                        'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00.00.01"),
-                        'to' => time(),
-                    ];
-                } else if($period == 'day') {
-                    $date = [
-                        'from' => strtotime(date('d.m.Y') . "00.00.01"),
-                        'to' => time()
-                    ];
-                } else if($period == 'yesterday') {
-                    $date = [
-                        'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
-                        'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
-                    ];
-                } else if($period == 'month') {
-                    $date = [
-                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00.00.01"),
-                        'to' => time(),
-                        'test' => date("d.m.Y", strtotime('first day of this month'))
-                    ];
-                }
-            }
-//
-
-
-        } else {
-            $date = [
-                'from' => strtotime(date('d.m.Y') . "00.00.01"),
-                'to' => time()
-            ];
-        }
-
+        $date = self::getFilterDate($request);
         $tasks = $this->getTasksToReports(3965530, $date['from'], $date['to']);
 
         return view('reports.reportThree', [
