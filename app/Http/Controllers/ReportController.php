@@ -207,7 +207,7 @@ class ReportController extends Controller {
             $price = 0;
 
             foreach($custom as $c)
-                if($c['field_id'] == 915455) $price = $c['values'][0]['value'];
+                if($c['field_id'] == 974373) $price = $c['values'][0]['value'];
 
             if( isset($array[$lead['status_id']]) ) {
                 $price = $price + $array[$lead['status_id']]['price'];
@@ -265,7 +265,7 @@ class ReportController extends Controller {
                         $price = 0;
 
                         foreach($custom as $c)
-                            if($c['field_id'] == 915455) $price = $c['values'][0]['value'];
+                            if($c['field_id'] == 974373) $price = $c['values'][0]['value'];
 
 
                         $price = $price + $v['users'][$i]['price'];
@@ -361,7 +361,7 @@ class ReportController extends Controller {
                         $price = 0;
 
                         foreach ($custom as $c)
-                            if ($c['field_id'] == 915455) $price = $c['values'][0]['value'];
+                            if ($c['field_id'] == 974373) $price = $c['values'][0]['value'];
 
 
                         $price = $price + $v['users'][$i]['price'];
@@ -438,7 +438,7 @@ class ReportController extends Controller {
                         $price = 0;
 
                         foreach ($custom as $c)
-                            if ($c['field_id'] == 915455) $price = $c['values'][0]['value'];
+                            if ($c['field_id'] == 974373) $price = $c['values'][0]['value'];
 
 
                         $price = $price + $v['users'][$i]['price'];
@@ -506,7 +506,7 @@ class ReportController extends Controller {
             $resource = "Источник не указан";
             $price = 0;
             foreach($custom as $c) {
-                if($c['field_id'] == 915455) $price = $c['values'][0]['value'];
+                if($c['field_id'] == 974373) $price = $c['values'][0]['value'];
                 if($c['field_id'] == 221387) $resource = $c['values'][0]['value'];
             }
 
