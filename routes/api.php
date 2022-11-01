@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
 
+use App\Http\Controllers\TestController;
+
 Route::post('/access/amo/new', [AmoCrmController::class, 'amoNewAccess']);
 
 Route::get('/reports/test', [ReportController::class, 'salesAnalysis']);
@@ -19,4 +21,4 @@ Route::get('/test', [ReportController::class, 'createdTasks']);
 
 Route::get('/access', [AmoCrmController::class, 'test']);
 
-Route::get('/t', [ReportController::class, 'ttt']);
+Route::get('/t', [TestController::class, 'test1']);

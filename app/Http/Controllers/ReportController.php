@@ -697,30 +697,28 @@ class ReportController extends Controller {
             'items' => $managers
         ];
 
-
-
-        foreach($array as $k => $v) {
-            foreach($tasks as $task) {
-                if($task['created_by'] == $k) {
-                    $count = 0;
-                    if(isset($array[$k])) $count = $array[$k]['count'] + 1;
-                    $array[$k]['count'] = $count;
-                }
-            }
-        }
-
-        $size = [
-            'count' => 0
-        ];
-
-        foreach($array as $k => $v) {
-            $size['count'] = $size['count'] + $v['count'];
-        }
-
-        return [
-            'size' => $size,
-            'items' => $array
-        ];
+//        foreach($array as $k => $v) {
+//            foreach($tasks as $task) {
+//                if($task['created_by'] == $k) {
+//                    $count = 0;
+//                    if(isset($array[$k])) $count = $array[$k]['count'] + 1;
+//                    $array[$k]['count'] = $count;
+//                }
+//            }
+//        }
+//
+//        $size = [
+//            'count' => 0
+//        ];
+//
+//        foreach($array as $k => $v) {
+//            $size['count'] = $size['count'] + $v['count'];
+//        }
+//
+//        return [
+//            'size' => $size,
+//            'items' => $array
+//        ];
     }
 
     /**

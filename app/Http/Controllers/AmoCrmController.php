@@ -456,4 +456,28 @@ class AmoCrmController extends Controller {
     public function test() {
         return Access::find(1);
     }
+
+    public function getLeadsByIds(array $leadsIds) {
+        $result = [];
+
+        $leads_list = array_chunk($leadsIds, 50);
+
+        foreach($leads_list as $list) {
+
+            $filter = "";
+            $i = 0;
+            foreach($list as $element) {
+                $filter .= "filter[id][{$i}]={$element}&";
+                $i++;
+            }
+
+            $response = $this->amoGet("/leads?{$filter}");
+
+            if(isset($response['_embedded']) && isset($response['_embedded']['leads']) && is_array($response['_embedded']['leads']) && sizeof($response['_embedded']['leads']) > 0) {
+                $result = array_merge($result, $response['_embedded']['leads']);
+            }
+        }
+
+        return $result;
+    }
 }
