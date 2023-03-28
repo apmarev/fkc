@@ -52,8 +52,8 @@ class ReportController extends Controller {
             $period = $request->input('period');
             if($period == 'custom') {
                 $date = [
-                    'from' => strtotime($request->input('date_from')),
-                    'to' => strtotime($request->input('date_to'))
+                    'from' => strtotime($request->input('date_from') . " 00.00.01"),
+                    'to' => strtotime($request->input('date_to') . " 00.00.01")
                 ];
             } else {
                 if($period == 'week') {
