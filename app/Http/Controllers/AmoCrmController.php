@@ -30,6 +30,7 @@ class AmoCrmController extends Controller {
             406483 => [ 'name' => 'Отдел Шпортало Анастасии', 'count' => 0, 'price' => 0, 'budget' => 0, 'users' => [] ],
             406486 => [ 'name' => 'Отдел Тришина Михаила', 'count' => 0, 'price' => 0, 'budget' => 0, 'users' => [] ],
             406489 => [ 'name' => 'Отдел Лосевой Юлии', 'count' => 0, 'price' => 0, 'budget' => 0, 'users' => [] ],
+            521234 => [ 'name' => 'Отдел Ральниковой Дарьи', 'count' => 0, 'price' => 0, 'budget' => 0, 'users' => [] ],
         ];
     }
 
