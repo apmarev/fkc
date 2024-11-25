@@ -52,28 +52,28 @@ class ReportController extends Controller {
             $period = $request->input('period');
             if($period == 'custom') {
                 $date = [
-                    'from' => strtotime($request->input('date_from') . " 00.00.01"),
-                    'to' => strtotime($request->input('date_to') . " 00.00.01")
+                    'from' => strtotime($request->input('date_from') . " 00:00:01"),
+                    'to' => strtotime($request->input('date_to') . " 00:00:01")
                 ];
             } else {
                 if($period == 'week') {
                     $date = [
-                        'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00.00.01"),
+                        'from' => strtotime(date("d.m.Y", strtotime('monday this week')) . "00:00:01"),
                         'to' => time(),
                     ];
                 } else if($period == 'day') {
                     $date = [
-                        'from' => strtotime(date('d.m.Y') . "00.00.01"),
+                        'from' => strtotime(date('d.m.Y') . "00:00:01"),
                         'to' => time()
                     ];
                 } else if($period == 'yesterday') {
                     $date = [
-                        'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00.00.01"),
-                        'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23.59.59")
+                        'from' => strtotime(date('d.m.Y', strtotime('yesterday')) . "00:00:01"),
+                        'to' => strtotime(date('d.m.Y', strtotime('yesterday')) . "23:59:59")
                     ];
                 } else if($period == 'month') {
                     $date = [
-                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00.00.01"),
+                        'from' => strtotime(date("d.m.Y", strtotime('first day of this month')) . "00:00:01"),
                         'to' => time(),
                         'test' => date("d.m.Y", strtotime('first day of this month'))
                     ];

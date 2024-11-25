@@ -7,6 +7,7 @@ use App\Models\Access;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
@@ -146,6 +147,7 @@ class AmoCrmController extends Controller {
         for($i=1;;$i++) {
             $query = "/{$type}?page={$i}&limit=250{$filter}";
             $res = $this->amoGet($query);
+
             $list = self::getIsSetList($res, $type);
 
             if(sizeof($list) > 0) {
@@ -251,6 +253,8 @@ class AmoCrmController extends Controller {
                 "Content-Type" => "application/json",
             ])
                 ->throw(function ($response, $e) {
+
+                    Log::info($response);
                     if(empty($response['_embedded']))
                         throw new \Error();
                 })
